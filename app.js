@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const dbConfig = require("./config/db.config.js");
+const cookieParser = require("cookie-parser");
+const dbConfig = require("./config/config.js");
 const conn = dbConfig.init();
 dbConfig.connect(conn);
 const https = require("https");
@@ -19,7 +20,7 @@ const apiSpec = YAML.load("swagger.yaml");
 
 // 미들웨어 설정
 app.use(express.json());
-
+app.use(cookieParser());
 // API 문서 노출
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
