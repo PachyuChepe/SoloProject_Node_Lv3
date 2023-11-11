@@ -1,40 +1,38 @@
-const jwt = require("jsonwebtoken"); // JWT 처리를 위한 모듈
-const { User } = require("../models/index.js"); // Sequelize User 모델
+const jwt = require("jsonwebtoken");
+const { User } = require("../models/index.js");
 const env = require("../config/env.config.js");
 
-// 사용자 인증 미들웨어
 module.exports = async (req, res, next) => {
-  // 요청에서 쿠키를 가져옴
   const { Authorization } = req.cookies;
-
-  // 쿠키에서 인증 타입과 토큰을 분리
   const [authType, authToken] = (Authorization ?? "").split(" ");
 
-  // 토큰이 없거나 인증 타입이 'Bearer'가 아니면 오류 메시지를 반환
   if (!authToken || authType !== "Bearer") {
-    res.status(401).send({
-      errorMessage: "로그인 후 이용 가능한 기능입니다.",
+    return res.status(401).send({
+      errorMessage: "인증 헤더 형식이 올바르지 않습니다.",
     });
-    return;
   }
 
   try {
-    // JWT를 검증하고, 토큰에 담긴 사용자 ID를 추출
     const { userId } = jwt.verify(authToken, env.JWT_SECRET);
-
-    // 사용자 ID로 데이터베이스에서 사용자를 찾음
     const user = await User.findByPk(userId);
-
-    // 찾은 사용자 정보를 응답 객체의 로컬 변수에 저장
+    if (!user) {
+      return res.status(401).send({
+        errorMessage: "인증된 사용자를 찾을 수 없습니다.",
+      });
+    }
     res.locals.user = user;
-
-    // 다음 미들웨어를 실행합니다.
     next();
   } catch (err) {
-    // JWT 검증에 실패하면 오류를 로깅하고 오류 메시지를 반환
-    console.error(err);
-    res.status(401).send({
-      errorMessage: "로그인 후 이용 가능한 기능입니다.",
-    });
+    if (err instanceof jwt.TokenExpiredError) {
+      res.clearCookie("Authorization");
+      return res.status(401).send({
+        errorMessage: "토큰이 만료되었습니다.",
+      });
+    } else {
+      console.error(err);
+      return res.status(500).send({
+        errorMessage: "서버 오류가 발생했습니다.",
+      });
+    }
   }
 };

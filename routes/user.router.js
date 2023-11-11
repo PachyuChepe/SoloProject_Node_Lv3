@@ -63,7 +63,7 @@ router.post("/login", verifyNotLoggedInMiddleware, async (req, res) => {
       return res.status(401).json({ message: "패스워드가 일치하지 않습니다." });
     }
 
-    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "12h" });
+    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "1s" });
     res.cookie("Authorization", `Bearer ${token}`);
     // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "Strict" });
     res.status(200).json({ message: "로그인 성공", token });
