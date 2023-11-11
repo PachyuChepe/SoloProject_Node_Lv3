@@ -8,19 +8,13 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Sequelize Configuration
-# The .sequelizerc file stores the Sequelize CLI configuration.
-# This file may vary across different environments, hence it is excluded from version control.
 .sequelizerc
 
 # Swagger Documentation
-# swaggerItem.yaml and swaggerUser.yaml are Swagger documentation files.
-# These files might contain environment-specific or sensitive information, thus excluded from version control.
 swaggerItem.yaml
 swaggerUser.yaml
 
 # Security Certificates
-# key.pem and cert.pem are private keys and certificates.
-# These should not be included in version control for security reasons.
 key.pem
 cert.pem
 
