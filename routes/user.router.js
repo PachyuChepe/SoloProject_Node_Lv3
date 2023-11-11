@@ -7,25 +7,70 @@ const env = require("../config/env.config.js");
 const authenticateToken = require("../middleware/login-middleware.js");
 
 // 회원 가입
+// router.post("/signup", async (req, res) => {
+//   try {
+//     const { email, password, confirmPassword, name } = req.body;
+//     // 비밀번호와 비밀번호 확인이 일치하는지 확인
+//     if (password !== confirmPassword) {
+//       return res.status(400).json({ message: "Passwords do not match" });
+//     }
+//     // 이메일 중복 확인
+//     const existingUser = await User.findOne({ where: { email } });
+//     if (existingUser) {
+//       return res.status(409).json({ message: "Email already in use" });
+//     }
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const user = await User.create({ email, password: hashedPassword, name });
+//     // 비밀번호를 제외한 사용자 정보 반환
+//     const { password: _, ...userData } = user.toJSON();
+//     res.status(201).json(userData);
+//   } catch (error) {
+//     res.status(400).json(error);
+//   }
+// });
+
 router.post("/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword, name } = req.body;
-    // 비밀번호와 비밀번호 확인이 일치하는지 확인
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
+
+    // 필수 입력 값 검증
+    if (!email || !password || !confirmPassword || !name) {
+      return res.status(400).json({ message: "필수 입력 필드가 누락되었습니다" });
     }
+
+    // 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "유효하지 않은 이메일 형식입니다" });
+    }
+
+    // 비밀번호 강도 검증
+    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+      return res.status(400).json({ message: "비밀번호가 복잡성 요구 사항을 충족하지 않습니다" });
+    }
+
+    // 비밀번호 일치 검증
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "비밀번호가 일치하지 않습니다" });
+    }
+
     // 이메일 중복 확인
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(409).json({ message: "Email already in use" });
+      return res.status(409).json({ message: "이미 사용 중인 이메일입니다" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: hashedPassword, name });
-    // 비밀번호를 제외한 사용자 정보 반환
+
     const { password: _, ...userData } = user.toJSON();
     res.status(201).json(userData);
   } catch (error) {
-    res.status(400).json(error);
+    if (error.name === "SequelizeDatabaseError") {
+      return res.status(500).json({ message: "데이터베이스 오류" });
+    }
+    console.error(error);
+    res.status(500).json({ message: "내부 서버 오류" });
   }
 });
 

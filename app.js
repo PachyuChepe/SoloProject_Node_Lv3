@@ -16,7 +16,7 @@ const env = require("./config/env.config.js");
 // connect();
 
 // Swagger API 문서 로드
-const apiSpec = YAML.load("swagger.yaml");
+const apiSpec = YAML.load("swaggerUser.yaml");
 
 // 미들웨어 설정
 app.use(express.json());
@@ -31,12 +31,7 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: [
-      "https://localhost:3000",
-      "http://localhost:3000",
-      "http://node-solo-lv1.kro.kr/",
-      "https://node-solo-lv1.kro.kr/",
-    ],
+    origin: ["https://localhost:8080", "http://localhost:8080"],
     credentials: true,
   })
 );
@@ -46,7 +41,7 @@ app.use(
 // app.use("/api", [productsSchema]);
 
 const userRouter = require("./routes/user.router.js");
-app.use("/api", [userRouter]);
+app.use("/", [userRouter]);
 
 // 서버 설정
 let server;
