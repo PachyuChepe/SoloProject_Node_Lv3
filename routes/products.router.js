@@ -10,7 +10,7 @@ router.post("/product", isLoggedIn, async (req, res) => {
 
   try {
     if (!title || !content) {
-      return res.status(400).json({ message: "제목과 내용은 필수입니다." });
+      return res.status(400).json({ message: "데이터 형식이 올바르지 않습니다." });
     }
 
     const newItem = await Items.create({
