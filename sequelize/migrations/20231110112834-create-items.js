@@ -26,6 +26,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.STRING,
+        defaultValue: "FOR_SALE",
       },
       createdAt: {
         allowNull: false,

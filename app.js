@@ -41,7 +41,8 @@ app.use(
 // app.use("/api", [productsSchema]);
 
 const userRouter = require("./routes/user.router.js");
-app.use("/", [userRouter]);
+const itemRouter = require("./routes/products.router.js");
+app.use("/", [userRouter, itemRouter]);
 
 // 서버 설정
 let server;

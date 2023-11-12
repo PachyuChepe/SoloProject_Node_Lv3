@@ -1,60 +1,85 @@
 const express = require("express");
 const router = express.Router();
-const UserItem = require("../schemas/productsSchema");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const { User, Items } = require("../sequelize/models/index.js");
+// const UserItem = require("../schemas/productsSchema");
+// const bcrypt = require("bcrypt");
+// const saltRounds = 10;
+const { isLoggedIn, isNotLoggedIn } = require("../middleware/verifyToken.middleware.js");
 
 // Create (상품 등록)
-router.post("/product", async (req, res) => {
-  const { title, content, author, password, status } = req.body;
+router.post("/product", isLoggedIn, async (req, res) => {
+  const { id } = res.locals.user;
+  const { title, content, status } = req.body;
 
-  if (!title || !content || !author || !password || !status) {
-    return res.status(400).json({ message: "데이터 형식이 올바르지 않습니다." });
-  }
+  try {
+    // const user = await User.findByPk(id);
 
-  bcrypt.hash(password, saltRounds, async (err, hash) => {
-    if (err) {
-      return res.status(500).json({ message: "패스워드 암호화 실패" });
+    if (!title || !content) {
+      return res.status(400).json({ message: "데이터 형식이 올바르지 않습니다." });
     }
-
-    const newUserItem = new UserItem({
+    const newItem = await Items.create({
       title,
       content,
-      author,
-      password: hash,
-      status,
+      user_id: id,
     });
 
-    try {
-      await newUserItem.save();
-      return res.status(201).json({ message: "판매 상품을 등록하였습니다." });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({ message: "상품 등록에 실패하였습니다." });
-    }
-  });
+    return res.status(201).json({ message: "판매 상품을 등록하였습니다.", item: newItem });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "상품 등록에 실패하였습니다." });
+  }
 });
 
 // Read (상품 목록 조회)
-router.get("/products", async (req, res) => {
+// 완성 들됨
+router.get("/products", isLoggedIn, async (req, res) => {
+  const { id } = res.locals.user;
+  const sort = req.query.sort ? req.query.sort.toUpperCase() : "DESC";
+
   try {
-    const products = await UserItem.find({}).sort({ createdAt: -1 });
-    return res.status(200).json({ data: products });
+    const getItems = await User.findAll({
+      attributes: ["name"],
+      order: [[{ model: Items }, "createdAt", sort]], // 이 위치에 order 옵션을 추가
+      where: { id },
+      include: [
+        {
+          model: Items,
+          attributes: ["id", "title", "content", "status", "createdAt"],
+          where: { user_id: id },
+        },
+      ],
+    });
+    return res.status(200).json({ data: getItems });
   } catch (err) {
     return res.status(500).json({ message: "상품 목록 조회에 실패하였습니다." });
   }
 });
 
 // Read (상품 상세 조회)
-router.get("/product/:userItemId", async (req, res) => {
-  const userItemId = req.params.userItemId;
-
+router.get("/product/:itemId", isLoggedIn, async (req, res) => {
+  const itemId = req.params.itemId;
+  const { id } = res.locals.user;
   try {
-    const product = await UserItem.findOne({ userItemId });
-    if (!product) {
+    const getItem = await User.findOne({
+      attributes: ["name"],
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: Items,
+          where: {
+            user_id: id,
+            id: itemId,
+          },
+          attributes: ["id", "title", "status", "createdAt"],
+        },
+      ],
+    });
+    if (!getItem) {
       return res.status(404).json({ message: "상품이 존재하지 않습니다." });
     }
-    return res.status(200).json({ data: product });
+    return res.status(200).json({ data: getItem });
   } catch (err) {
     console.log("조회 실패", err);
     return res.status(500).json({ message: "상품 조회에 실패하였습니다." });
@@ -62,65 +87,52 @@ router.get("/product/:userItemId", async (req, res) => {
 });
 
 // Update (상품 정보 수정)
-router.put("/product/:userItemId", async (req, res) => {
-  const userItemId = req.params.userItemId;
-  const { title, content, password, status } = req.body;
+router.put("/product/:itemId", isLoggedIn, async (req, res) => {
+  const itemId = req.params.itemId;
+  const { id } = res.locals.user;
+  const { title, content, status } = req.body;
 
-  if (!title || !content || !password) {
+  if (!title || !content || !status) {
     return res.status(400).json({ message: "데이터 형식이 올바르지 않습니다." });
   }
 
   try {
-    const product = await UserItem.findOne({ userItemId });
-    if (!product) {
+    const updateItems = await Items.update(
+      {
+        title,
+        content,
+        status,
+      },
+      {
+        where: { id: itemId, user_id: id },
+      }
+    );
+    if (!updateItems) {
       return res.status(404).json({ message: "상품이 존재하지 않습니다." });
     }
 
-    bcrypt.compare(password, product.password, async (err, isMatch) => {
-      if (err) {
-        return res.status(500).json({ message: "비밀번호 비교 실패" });
-      }
-
-      if (!isMatch) {
-        return res.status(401).json({ message: "상품을 수정할 권한이 없습니다." });
-      }
-
-      product.title = title;
-      product.content = content;
-      product.status = status || product.status;
-
-      await product.save();
-      return res.status(200).json({ message: "상품 정보를 수정하였습니다." });
-    });
+    return res.status(200).json({ message: "상품 정보를 수정하였습니다." });
   } catch (err) {
+    console.log("뭐가문젠데", err);
     return res.status(500).json({ message: "상품 수정에 실패하였습니다." });
   }
 });
 
 // Delete (상품 삭제)
-router.delete("/product/:userItemId", async (req, res) => {
-  const userItemId = req.params.userItemId;
-  const { password } = req.body;
+router.delete("/product/:itemId", isLoggedIn, async (req, res) => {
+  const itemId = req.params.itemId;
+  const { id } = res.locals.user;
 
   try {
-    const product = await UserItem.findOne({ userItemId });
-    if (!product) {
+    const deleteItem = await Items.destroy({
+      where: { id: itemId, user_id: id },
+    });
+    if (!deleteItem) {
       return res.status(404).json({ message: "상품이 존재하지 않습니다." });
     }
-
-    bcrypt.compare(password, product.password, async (err, isMatch) => {
-      if (err) {
-        return res.status(500).json({ message: "비밀번호 비교 실패" });
-      }
-
-      if (!isMatch) {
-        return res.status(401).json({ message: "상품을 삭제할 권한이 없습니다." });
-      }
-
-      await UserItem.deleteOne({ userItemId });
-      return res.status(200).json({ message: "상품을 삭제하였습니다." });
-    });
+    return res.status(200).json({ message: "상품을 삭제하였습니다." });
   } catch (err) {
+    console.log("뭐가문제임", err);
     return res.status(500).json({ message: "상품 삭제에 실패하였습니다." });
   }
 });
