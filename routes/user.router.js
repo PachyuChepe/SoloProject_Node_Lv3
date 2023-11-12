@@ -4,11 +4,10 @@ const { User } = require("../sequelize/models/index.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../config/env.config.js");
-const verifyLoggedInMiddleware = require("../middleware/verifyLoggedIn.middleware.js");
-const verifyNotLoggedInMiddleware = require("../middleware/verifyNotLoggedIn.middleware.js");
+const { isLoggedIn, isNotLoggedIn } = require("../middleware/verifyToken.middleware.js");
 
 // 회원가입
-router.post("/signup", verifyNotLoggedInMiddleware, async (req, res) => {
+router.post("/signup", isNotLoggedIn, async (req, res) => {
   const { email, password, confirmPassword, name } = req.body;
   try {
     // 필수 입력 값 검증
@@ -50,7 +49,7 @@ router.post("/signup", verifyNotLoggedInMiddleware, async (req, res) => {
 });
 
 // 로그인
-router.post("/login", verifyNotLoggedInMiddleware, async (req, res) => {
+router.post("/login", isNotLoggedIn, async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ where: { email } });
@@ -74,7 +73,7 @@ router.post("/login", verifyNotLoggedInMiddleware, async (req, res) => {
 });
 
 // 사용자 조회
-router.get("/user", verifyLoggedInMiddleware, async (req, res) => {
+router.get("/user", isLoggedIn, async (req, res) => {
   try {
     // 인증 미들웨어를 통해 얻은 사용자 정보를 추출
     const { email, name } = res.locals.user;
@@ -95,7 +94,7 @@ router.get("/user", verifyLoggedInMiddleware, async (req, res) => {
 });
 
 // 회원 정보 수정
-router.put("/user", verifyLoggedInMiddleware, async (req, res) => {
+router.put("/user", isLoggedIn, async (req, res) => {
   const { id } = res.locals.user;
   const { currentPassword, newPassword, name } = req.body;
   try {
@@ -124,7 +123,7 @@ router.put("/user", verifyLoggedInMiddleware, async (req, res) => {
 });
 
 // 회원 탈퇴
-router.delete("/user", verifyLoggedInMiddleware, async (req, res) => {
+router.delete("/user", isLoggedIn, async (req, res) => {
   const { id } = res.locals.user;
   try {
     const user = await User.findByPk(id);
@@ -141,7 +140,7 @@ router.delete("/user", verifyLoggedInMiddleware, async (req, res) => {
 });
 
 // 로그아웃
-router.post("/logout", verifyLoggedInMiddleware, (req, res) => {
+router.post("/logout", isLoggedIn, (req, res) => {
   res.clearCookie("Authorization");
   res.status(200).json({ message: "로그아웃 성공" });
 });

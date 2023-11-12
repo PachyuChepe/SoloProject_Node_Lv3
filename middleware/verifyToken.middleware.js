@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../sequelize/models/index.js");
 const env = require("../config/env.config.js");
 
-module.exports = async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
   const [authType, authToken] = (Authorization ?? "").split(" ");
 
@@ -24,6 +24,8 @@ module.exports = async (req, res, next) => {
     next();
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
+      // JWT토큰이 만료될 경우 엑세스 토큰과 리프레시 토큰을 통해서 재발급 받아야되지만
+      // 임시로 헤더에 있는 쿠키를 터트리는 것으로 유사구현
       res.clearCookie("Authorization");
       return res.status(401).send({
         errorMessage: "토큰이 만료되었습니다.",
@@ -34,5 +36,25 @@ module.exports = async (req, res, next) => {
         errorMessage: "서버 오류가 발생했습니다.",
       });
     }
+  }
+};
+
+exports.isNotLoggedIn = async (req, res, next) => {
+  const { Authorization } = req.cookies;
+
+  const [authType, authToken] = (Authorization ?? "").split(" ");
+
+  if (!authToken || authType !== "Bearer") {
+    next();
+    return;
+  }
+  try {
+    jwt.verify(authToken, env.JWT_SECRET);
+
+    res.status(401).send({
+      errorMessage: "이미 로그인된 상태입니다",
+    });
+  } catch (error) {
+    next();
   }
 };
