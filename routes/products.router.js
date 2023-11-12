@@ -124,7 +124,6 @@ router.delete("/product/:itemId", isLoggedIn, async (req, res) => {
   const itemId = req.params.itemId;
   const { id } = res.locals.user;
 
-  // 예시: itemId 파라미터 유효성 검사
   if (isNaN(itemId)) {
     return res.status(400).json({ message: "잘못된 상품 ID입니다." });
   }
