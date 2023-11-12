@@ -71,7 +71,7 @@ router.get("/product/:itemId", async (req, res) => {
 
   try {
     const getItem = await Items.findOne({
-      attributes: ["id", "title", "status", "createdAt"],
+      attributes: ["id", "title", "content", "status", "createdAt"],
       where: { id: itemId },
       include: [
         {

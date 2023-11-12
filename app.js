@@ -31,7 +31,7 @@ const itemRouter = require("./routes/products.router.js");
 app.use("/", [userRouter, itemRouter]);
 
 // Swagger API 문서 설정
-const apiSpec = YAML.load("swaggerUser.yaml");
+const apiSpec = YAML.load("swagger.yaml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
 // 기본 경로 설정

@@ -129,7 +129,7 @@ router.delete("/user", isLoggedIn, async (req, res) => {
     }
     await user.destroy();
     res.clearCookie("Authorization");
-    res.status(204).json({ message: "회원 탈퇴가 성공적으로 처리되었습니다." });
+    res.status(200).json({ message: "회원 탈퇴가 성공적으로 처리되었습니다." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ errorMessage: "내부 서버 오류" });
