@@ -75,15 +75,12 @@ router.post("/login", isNotLoggedIn, async (req, res) => {
 // 사용자 조회
 router.get("/user", isLoggedIn, async (req, res) => {
   try {
-    // 인증 미들웨어를 통해 얻은 사용자 정보를 추출
     const { email, name } = res.locals.user;
 
-    // 사용자 정보가 존재하지 않을 경우
     if (!email || !name) {
       return res.status(404).json({ message: "사용자 정보를 찾을 수 없습니다" });
     }
 
-    // 사용자 정보를 반환
     res.status(200).json({
       user: { email, name },
     });
