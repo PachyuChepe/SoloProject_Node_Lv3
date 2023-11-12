@@ -9,6 +9,7 @@ const https = require("https");
 const fs = require("fs");
 const YAML = require("yamljs");
 const swaggerUi = require("swagger-ui-express");
+const morgan = require("morgan");
 
 // 환경 설정 및 데이터베이스 연결
 const env = require("./config/env.config.js");
@@ -28,7 +29,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 app.get("/", (req, res) => {
   res.send("안녕하세요 세계!");
 });
-
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: ["https://localhost:8080", "http://localhost:8080"],

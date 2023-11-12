@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { User, Items } = require("../sequelize/models/index.js");
+const { User, Items, Sequelize } = require("../sequelize/models/index.js");
 // const UserItem = require("../schemas/productsSchema");
 // const bcrypt = require("bcrypt");
 // const saltRounds = 10;
+// const { Sequelize } = require("sequelize");
 const { isLoggedIn, isNotLoggedIn } = require("../middleware/verifyToken.middleware.js");
 
 // Create (상품 등록)
@@ -32,20 +33,20 @@ router.post("/product", isLoggedIn, async (req, res) => {
 
 // Read (상품 목록 조회)
 // 완성 들됨
-router.get("/products", isLoggedIn, async (req, res) => {
-  const { id } = res.locals.user;
+router.get("/products", async (req, res) => {
+  // const { id } = res.locals.user;
   const sort = req.query.sort ? req.query.sort.toUpperCase() : "DESC";
 
   try {
     const getItems = await User.findAll({
       attributes: ["name"],
       order: [[{ model: Items }, "createdAt", sort]], // 이 위치에 order 옵션을 추가
-      where: { id },
+      // where: { id },
       include: [
         {
           model: Items,
           attributes: ["id", "title", "content", "status", "createdAt"],
-          where: { user_id: id },
+          // where: { user_id: id },
         },
       ],
     });
@@ -56,26 +57,39 @@ router.get("/products", isLoggedIn, async (req, res) => {
 });
 
 // Read (상품 상세 조회)
-router.get("/product/:itemId", isLoggedIn, async (req, res) => {
+router.get("/product/:itemId", async (req, res) => {
   const itemId = req.params.itemId;
-  const { id } = res.locals.user;
+  // const { id } = res.locals.user;
   try {
-    const getItem = await User.findOne({
-      attributes: ["name"],
-      where: {
-        id,
-      },
+    const getItem = await Items.findOne({
+      attributes: ["id", "title", "status", "createdAt"],
+      where: { id: itemId },
       include: [
         {
-          model: Items,
+          model: User,
+          attributes: ["name"],
           where: {
-            user_id: id,
-            id: itemId,
+            id: Sequelize.col("Items.user_id"),
           },
-          attributes: ["id", "title", "status", "createdAt"],
         },
       ],
     });
+    // const getItem = await User.findOne({
+    //   attributes: ["name"],
+    //   where: {
+    //     id: itemId,
+    //   },
+    //   include: [
+    //     {
+    //       model: Items,
+    //       where: {
+    //         user_id: id,
+    //         id: itemId,
+    //       },
+    //       attributes: ["id", "title", "status", "createdAt"],
+    //     },
+    //   ],
+    // });
     if (!getItem) {
       return res.status(404).json({ message: "상품이 존재하지 않습니다." });
     }
