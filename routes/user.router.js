@@ -22,8 +22,8 @@ router.post("/signup", isNotLoggedIn, async (req, res) => {
     }
 
     // 비밀번호 강도 검증
-    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
-      return res.status(400).json({ message: "비밀번호는 최소 8자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함 해야합니다." });
+    if (password.length < 6 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+      return res.status(400).json({ message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함 해야합니다." });
     }
 
     // 비밀번호 일치 검증
@@ -109,8 +109,8 @@ router.put("/user", isLoggedIn, async (req, res) => {
       return res.status(401).json({ message: "현재 비밀번호가 일치하지 않습니다." });
     }
 
-    if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[!@#$%^&*]/.test(newPassword)) {
-      return res.status(400).json({ message: "비밀번호는 최소 8자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함해야 합니다." });
+    if (newPassword.length < 6 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[!@#$%^&*]/.test(newPassword)) {
+      return res.status(400).json({ message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함해야 합니다." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

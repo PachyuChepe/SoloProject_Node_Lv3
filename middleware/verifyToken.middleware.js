@@ -8,7 +8,7 @@ exports.isLoggedIn = async (req, res, next) => {
 
   if (!authToken || authType !== "Bearer") {
     return res.status(401).send({
-      errorMessage: "인증 헤더 형식이 올바르지 않습니다.",
+      errorMessage: "로그인이 필요합니다.",
     });
   }
 
