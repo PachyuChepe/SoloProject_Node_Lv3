@@ -1,3 +1,11 @@
+# 배포 주소
+
+https://vitahub.xyz
+
+# Swagger API 동작 테스트
+
+https://vitahub.xyz/api-docs
+
 # 환경변수
 
 .env.example 기재 <br>
