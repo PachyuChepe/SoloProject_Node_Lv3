@@ -20,7 +20,12 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["https://localhost:4000", "http://localhost:4000"],
+    origin: [
+      `https://localhost:${env.SERVER_PORT}`,
+      `http://localhost:${env.SERVER_PORT}`,
+      "http://aws-node-project.kro.kr",
+      "https://aws-node-project.kro.kr",
+    ],
     credentials: true,
   })
 );

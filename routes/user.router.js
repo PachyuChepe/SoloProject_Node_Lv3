@@ -41,7 +41,7 @@ router.post("/signup", isNotLoggedIn, async (req, res) => {
     const user = await User.create({ email, password: hashedPassword, name });
 
     const { password: _, ...userData } = user.toJSON();
-    return res.status(201).json({ success: true, userData });
+    return res.status(201).json({ success: true, data: userData });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "내부 서버 오류" });
@@ -83,7 +83,7 @@ router.get("/user", isLoggedIn, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user: { email, name },
+      data: { email, name },
     });
   } catch (error) {
     console.error(error);
