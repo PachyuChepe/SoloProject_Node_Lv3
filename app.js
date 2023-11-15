@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["https://localhost:8080", "http://localhost:8080"],
+    origin: ["https://localhost:4000", "http://localhost:4000"],
     credentials: true,
   })
 );
