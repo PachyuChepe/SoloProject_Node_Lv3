@@ -1,47 +1,48 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 dotenv.config();
-const dbInfo = {
-  host: process.env.SERVER_HOST,
-  port: process.env.MYSQL_DEFAULT_PORT,
-  user: process.env.MYSQL_USERNAME,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.DATABASE_NAME,
-};
 
 module.exports = {
   development: {
-    username: process.env.MYSQL_USERNAME,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.DATABASE_NAME,
-    host: process.env.SERVER_HOST,
-    port: process.env.MYSQL_DEFAULT_PORT,
+    host: process.env.LOCAL_MYSQL_HOST,
+    port: process.env.LOCAL_MYSQL_PORT,
+    username: process.env.LOCAL_MYSQL_USERNAME,
+    password: process.env.LOCAL_MYSQL_PASSWORD,
+    database: process.env.LOCAL_MYSQL_DATABASE_NAME,
     dialect: "mysql",
     logging: false, //콘솔창 쿼리 로그 off
   },
 
   test: {
-    username: process.env.MYSQL_USERNAME,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.DATABASE_NAME,
-    host: process.env.SERVER_HOST,
-    port: process.env.MYSQL_DEFAULT_PORT,
+    host: process.env.LOCAL_MYSQL_HOST,
+    port: process.env.LOCAL_MYSQL_PORT,
+    username: process.env.LOCAL_MYSQL_USERNAME,
+    password: process.env.LOCAL_MYSQL_PASSWORD,
+    database: process.env.LOCAL_MYSQL_DATABASE_NAME,
     dialect: "mysql",
     logging: false,
   },
 
   production: {
-    username: process.env.MYSQL_USERNAME,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.DATABASE_NAME,
-    host: process.env.SERVER_HOST,
-    port: process.env.MYSQL_DEFAULT_PORT,
+    host: process.env.RDS_MYSQL_HOST,
+    port: process.env.RDS_MYSQL_PORT,
+    username: process.env.RDS_MYSQL_USERNAME,
+    password: process.env.RDS_MYSQL_PASSWORD,
+    database: process.env.RDS_MYSQL_DATABASE_NAME,
     dialect: "mysql",
     logging: false,
   },
 
   init: function () {
-    return mysql.createConnection(dbInfo);
+    const env = process.env.NODE_ENV || "development";
+    const config = this[env];
+    return mysql.createConnection({
+      host: config.host,
+      port: config.port,
+      user: config.username,
+      password: config.password,
+      database: config.database,
+    });
   },
 
   connect: function (conn) {

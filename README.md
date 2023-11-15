@@ -1,11 +1,6 @@
 # 환경변수
 
-- .env 파일에 어떤 환경변수가 추가되어야 하는지 작성합니다.
-- key=value 형태에서 key만 나열합니다. value는 비밀!
-
-- DB_URL
-- JWT_SECRET
-- 그 밖의 사용한 환경변수를 나열해 주세요.
+.env.example 기재 <br>
 
 # API 명세서 URL
 
@@ -13,7 +8,7 @@
 
 # ERD URL
 
-- ERD Cloud URL 추가
+https://www.erdcloud.com/d/iQAsZFB6uA7hc8d9m <br>
 
 # 더 고민해 보기
 

@@ -12,39 +12,39 @@ router.post("/signup", isNotLoggedIn, async (req, res) => {
   try {
     // 필수 입력 값 검증
     if (!email || !password || !confirmPassword || !name) {
-      return res.status(400).json({ message: "필수 입력 정보가 누락되었습니다" });
+      return res.status(400).json({ success: false, message: "필수 입력 정보가 누락되었습니다" });
     }
 
     // 이메일 형식 검증
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "유효하지 않은 이메일 형식입니다" });
+      return res.status(400).json({ success: false, message: "유효하지 않은 이메일 형식입니다" });
     }
 
     // 비밀번호 강도 검증
     if (password.length < 6 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
-      return res.status(400).json({ message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함 해야합니다." });
+      return res.status(400).json({ success: false, message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함 해야합니다." });
     }
 
     // 비밀번호 일치 검증
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "비밀번호가 일치하지 않습니다" });
+      return res.status(400).json({ success: false, message: "비밀번호가 일치하지 않습니다" });
     }
 
     // 이메일 중복 확인
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(409).json({ message: "이미 사용 중인 이메일입니다" });
+      return res.status(409).json({ success: false, message: "이미 사용 중인 이메일입니다" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: hashedPassword, name });
 
     const { password: _, ...userData } = user.toJSON();
-    return res.status(201).json(userData);
+    return res.status(201).json({ success: true, userData });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ errorMessage: "내부 서버 오류" });
+    return res.status(500).json({ success: false, message: "내부 서버 오류" });
   }
 });
 
@@ -54,21 +54,21 @@ router.post("/login", isNotLoggedIn, async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ message: "존재하지 않는 사용자 입니다." });
+      return res.status(401).json({ success: false, message: "존재하지 않는 사용자 입니다." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "패스워드가 일치하지 않습니다." });
+      return res.status(401).json({ success: false, message: "패스워드가 일치하지 않습니다." });
     }
 
     const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "12h" });
     res.cookie("Authorization", `Bearer ${token}`);
     // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "Strict" });
-    res.status(200).json({ message: "로그인 성공", token });
+    res.status(200).json({ success: true, message: "로그인 성공", token });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ errorMessage: "내부 서버 오류" });
+    return res.status(500).json({ success: false, message: "내부 서버 오류" });
   }
 });
 
@@ -78,15 +78,16 @@ router.get("/user", isLoggedIn, async (req, res) => {
     const { email, name } = res.locals.user;
 
     if (!email || !name) {
-      return res.status(404).json({ message: "사용자 정보를 찾을 수 없습니다" });
+      return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다" });
     }
 
     res.status(200).json({
+      success: true,
       user: { email, name },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ errorMessage: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "내부 서버 오류" });
   }
 });
 
@@ -98,24 +99,24 @@ router.put("/user", isLoggedIn, async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      return res.status(404).json({ message: "해당 사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ success: false, message: "해당 사용자를 찾을 수 없습니다." });
     }
 
     const passwordValidation = await bcrypt.compare(currentPassword, user.password);
     if (!passwordValidation) {
-      return res.status(401).json({ message: "현재 비밀번호가 일치하지 않습니다." });
+      return res.status(401).json({ success: false, message: "현재 비밀번호가 일치하지 않습니다." });
     }
 
     if (newPassword.length < 6 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[!@#$%^&*]/.test(newPassword)) {
-      return res.status(400).json({ message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함해야 합니다." });
+      return res.status(400).json({ success: false, message: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함해야 합니다." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await user.update({ password: hashedPassword, name });
-    res.status(200).json({ message: "사용자 정보가 성공적으로 업데이트되었습니다." });
+    res.status(200).json({ success: true, message: "사용자 정보가 성공적으로 업데이트되었습니다." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ errorMessage: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "내부 서버 오류" });
   }
 });
 
@@ -125,21 +126,21 @@ router.delete("/user", isLoggedIn, async (req, res) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ success: false, message: "사용자를 찾을 수 없습니다." });
     }
     await user.destroy();
     res.clearCookie("Authorization");
-    res.status(200).json({ message: "회원 탈퇴가 성공적으로 처리되었습니다." });
+    res.status(200).json({ success: true, message: "회원 탈퇴가 성공적으로 처리되었습니다." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ errorMessage: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "내부 서버 오류" });
   }
 });
 
 // 로그아웃
 router.post("/logout", isLoggedIn, (req, res) => {
   res.clearCookie("Authorization");
-  res.status(200).json({ message: "로그아웃 성공" });
+  res.status(200).json({ success: true, message: "로그아웃 성공" });
 });
 
 module.exports = router;
