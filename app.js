@@ -20,12 +20,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: [
-      `https://localhost:${env.SERVER_PORT}`,
-      `http://localhost:${env.SERVER_PORT}`,
-      "http://aws-node-project.kro.kr",
-      "https://aws-node-project.kro.kr",
-    ],
+    origin: [`https://localhost:${env.SERVER_PORT}`, `http://localhost:${env.SERVER_PORT}`, "http://vitahub.xyz", "https://vitahub.xyz"],
     credentials: true,
   })
 );
