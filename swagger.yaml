@@ -2,14 +2,17 @@
 openapi: 3.0.0
 info:
   title: 사용자 및 상품 관리 API
-  version: 1.0.0
+  description: 사용자 관리 및 상품 관리 기능을 제공하는 API.
+  version: 2.0.0
 servers:
-  - url: http://localhost:8080
-    description: 개발 서버
+  - url: http://aws-node-project.kro.kr
+    description: 배포 서버
+  - url: http://localhost:4000
+    description: 로컬 서버
 tags:
   - name: Users
     description: 회원 관련 엔드포인트
-  - name: Items
+  - name: Products
     description: 상품 관련 엔드포인트
 paths:
   /signup:
@@ -26,11 +29,13 @@ paths:
         required: true
       responses:
         "201":
-          description: 사용자가 성공적으로 생성됨
+          description: 회원가입 성공
         "400":
-          description: 잘못된 요청
+          description: 필수 입력 정보 누락 또는 유효하지 않은 형식
         "409":
           description: 이미 사용 중인 이메일
+        "500":
+          description: 내부 서버 오류
   /login:
     post:
       tags:
@@ -45,38 +50,31 @@ paths:
         required: true
       responses:
         "200":
-          description: 성공적으로 로그인됨
+          description: 로그인 성공
         "401":
-          description: 유효하지 않은 로그인 정보
-  /logout:
-    post:
-      tags:
-        - Users
-      summary: 로그아웃
-      description: 현재 사용자를 로그아웃합니다.
-      responses:
-        "200":
-          description: 로그아웃 성공
-      security:
-        - bearerAuth: []
+          description: 존재하지 않는 사용자 또는 패스워드 불일치
+        "500":
+          description: 내부 서버 오류
   /user:
     get:
       tags:
         - Users
       summary: 사용자 조회
-      description: 로그인한 사용자의 정보를 조회합니다.
+      description: 현재 로그인된 사용자의 정보를 조회합니다.
       responses:
         "200":
-          description: 사용자 정보 반환
+          description: 사용자 정보 조회 성공
         "404":
           description: 사용자 정보를 찾을 수 없음
+        "500":
+          description: 내부 서버 오류
       security:
         - bearerAuth: []
     put:
       tags:
         - Users
       summary: 회원 정보 수정
-      description: 사용자 정보를 수정합니다.
+      description: 현재 로그인된 사용자의 정보를 수정합니다.
       requestBody:
         content:
           application/json:
@@ -85,29 +83,48 @@ paths:
         required: true
       responses:
         "200":
-          description: 사용자 정보 업데이트 성공
+          description: 사용자 정보 수정 성공
         "401":
-          description: 현재 비밀번호가 일치하지 않음
+          description: 현재 비밀번호 불일치
+        "400":
+          description: 새 비밀번호 형식 불일치
         "404":
-          description: 사용자를 찾을 수 없음
+          description: 해당 사용자를 찾을 수 없음
+        "500":
+          description: 내부 서버 오류
       security:
         - bearerAuth: []
     delete:
       tags:
         - Users
       summary: 회원 탈퇴
-      description: 사용자 계정을 삭제합니다.
+      description: 현재 로그인된 사용자를 삭제합니다.
       responses:
         "200":
           description: 회원 탈퇴 성공
         "404":
           description: 사용자를 찾을 수 없음
+        "500":
+          description: 내부 서버 오류
+      security:
+        - bearerAuth: []
+  /logout:
+    post:
+      tags:
+        - Users
+      summary: 로그아웃
+      description: 현재 로그인된 사용자를 로그아웃합니다.
+      responses:
+        "200":
+          description: 로그아웃 성공
+        "500":
+          description: 내부 서버 오류
       security:
         - bearerAuth: []
   /product:
     post:
       tags:
-        - Items
+        - Products
       summary: 상품 등록
       description: 새로운 상품을 등록합니다.
       requestBody:
@@ -118,50 +135,49 @@ paths:
         required: true
       responses:
         "201":
-          description: 상품이 성공적으로 등록됨
+          description: 상품 등록 성공
         "400":
-          description: 잘못된 요청
+          description: 데이터 형식이 올바르지 않음
         "500":
-          description: 서버 오류
+          description: 상품 생성 실패
       security:
         - bearerAuth: []
   /products:
     get:
       tags:
-        - Items
+        - Products
       summary: 상품 목록 조회
-      description: 상품 목록을 조회합니다.
+      description: 등록된 모든 상품의 목록을 조회합니다.
       parameters:
         - name: sort
           in: query
-          description: 정렬 방식
+          description: 정렬 방식 (ASC 또는 DESC)
           required: false
           style: form
           explode: true
           schema:
             type: string
-            enum:
-              - ASC
-              - DESC
       responses:
         "200":
-          description: 상품 목록 반환
+          description: 상품 목록 조회 성공
         "204":
           description: 등록된 상품 없음
         "400":
-          description: 잘못된 요청
+          description: 잘못된 정렬 방식
         "500":
-          description: 서버 오류
-  /product/{itemId}:
+          description: 상품 목록 조회 실패
+      security:
+        - bearerAuth: []
+  /product/{productId}:
     get:
       tags:
-        - Items
+        - Products
       summary: 상품 상세 조회
       description: 특정 상품의 상세 정보를 조회합니다.
       parameters:
-        - name: itemId
+        - name: productId
           in: path
-          description: 상품 ID
+          description: 조회할 상품의 ID
           required: true
           style: simple
           explode: false
@@ -169,22 +185,28 @@ paths:
             type: integer
       responses:
         "200":
-          description: 상품 상세 정보 반환
+          description: 상품 상세 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
         "404":
           description: 상품이 존재하지 않음
         "400":
-          description: 잘못된 요청
+          description: 잘못된 상품 ID
         "500":
-          description: 서버 오류
+          description: 내부 서버 오류
+      security:
+        - bearerAuth: []
     put:
       tags:
-        - Items
+        - Products
       summary: 상품 정보 수정
-      description: 상품 정보를 수정합니다.
+      description: 특정 상품의 정보를 수정합니다.
       parameters:
-        - name: itemId
+        - name: productId
           in: path
-          description: 상품 ID
+          description: 수정할 상품의 ID
           required: true
           style: simple
           explode: false
@@ -194,7 +216,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/product_itemId_body"
+              $ref: "#/components/schemas/product_productId_body"
         required: true
       responses:
         "200":
@@ -202,20 +224,20 @@ paths:
         "404":
           description: 상품이 존재하지 않거나 권한 없음
         "400":
-          description: 잘못된 요청
+          description: 데이터 형식이 올바르지 않음
         "500":
-          description: 서버 오류
+          description: 상품 수정 실패
       security:
         - bearerAuth: []
     delete:
       tags:
-        - Items
+        - Products
       summary: 상품 삭제
-      description: 상품을 삭제합니다.
+      description: 특정 상품을 삭제합니다.
       parameters:
-        - name: itemId
+        - name: productId
           in: path
-          description: 상품 ID
+          description: 삭제할 상품의 ID
           required: true
           style: simple
           explode: false
@@ -227,9 +249,9 @@ paths:
         "404":
           description: 상품이 존재하지 않거나 권한 없음
         "400":
-          description: 잘못된 요청
+          description: 잘못된 상품 ID
         "500":
-          description: 서버 오류
+          description: 상품 삭제 실패
       security:
         - bearerAuth: []
 components:
@@ -255,9 +277,26 @@ components:
       properties:
         email:
           type: string
+          format: email
         password:
           type: string
-    product_itemId_body:
+    inline_response_200:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        User:
+          $ref: "#/components/schemas/inline_response_200_User"
+    product_productId_body:
       type: object
       properties:
         title:
@@ -266,11 +305,17 @@ components:
           type: string
         status:
           type: string
+    inline_response_200_User:
+      type: object
+      properties:
+        name:
+          type: string
     signup_body:
       type: object
       properties:
         email:
           type: string
+          format: email
         password:
           type: string
         confirmPassword:
