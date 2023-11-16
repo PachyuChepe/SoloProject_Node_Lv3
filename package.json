@@ -8,6 +8,7 @@
     "dev": "nodemon app.js",
     "start:rds": "cross-env NODE_ENV=production nodemon app.js",
     "resetdb": "npx sequelize db:drop && npx sequelize db:create && npx sequelize-cli db:migrate",
+    "resetdb:ct": "cross-env NODE_ENV=mariaDB npx sequelize db:drop && cross-env NODE_ENV=mariaDB npx sequelize db:create && cross-env NODE_ENV=mariaDB npx sequelize-cli db:migrate",
     "resetdb:rds": "cross-env NODE_ENV=production npx sequelize db:drop && cross-env NODE_ENV=production npx sequelize db:create && cross-env NODE_ENV=production npx sequelize-cli db:migrate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
