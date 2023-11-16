@@ -4,6 +4,7 @@
   "description": "노드 숙련 개인과제",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "dev": "nodemon app.js",
     "start:rds": "cross-env NODE_ENV=production nodemon app.js",
     "resetdb": "npx sequelize db:drop && npx sequelize db:create && npx sequelize-cli db:migrate",
