@@ -1,3 +1,5 @@
+// routes/user.router.js
+
 const express = require("express");
 const router = express.Router();
 const { User } = require("../sequelize/models/index.js");
@@ -44,7 +46,7 @@ router.post("/signup", isNotLoggedIn, async (req, res) => {
     return res.status(201).json({ success: true, data: userData });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "내부 서버 오류" });
+    return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
 
@@ -54,7 +56,7 @@ router.post("/login", isNotLoggedIn, async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ success: false, message: "존재하지 않는 사용자 입니다." });
+      return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -68,7 +70,7 @@ router.post("/login", isNotLoggedIn, async (req, res) => {
     res.status(200).json({ success: true, message: "로그인 성공", token });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "내부 서버 오류" });
+    return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
 
@@ -87,7 +89,7 @@ router.get("/user", isLoggedIn, async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
 
@@ -99,7 +101,7 @@ router.put("/user", isLoggedIn, async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "해당 사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다." });
     }
 
     const passwordValidation = await bcrypt.compare(currentPassword, user.password);
@@ -116,7 +118,7 @@ router.put("/user", isLoggedIn, async (req, res) => {
     res.status(200).json({ success: true, message: "사용자 정보가 성공적으로 업데이트되었습니다." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
 
@@ -126,14 +128,14 @@ router.delete("/user", isLoggedIn, async (req, res) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다." });
     }
     await user.destroy();
     res.clearCookie("Authorization");
     res.status(200).json({ success: true, message: "회원 탈퇴가 성공적으로 처리되었습니다." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "내부 서버 오류" });
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
 

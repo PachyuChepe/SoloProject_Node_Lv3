@@ -1,8 +1,11 @@
+// config/db.config.js
+
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
+  // [개발 단계] 로컬 환경 MySQL Workbench 8.0v 연결
   development: {
     host: process.env.LOCAL_MYSQL_HOST,
     port: process.env.LOCAL_MYSQL_PORT,
@@ -13,6 +16,18 @@ module.exports = {
     logging: false, //콘솔창 쿼리 로그 off
   },
 
+  // [테스트 단계] 로컬 환경 MySQL Workbench 8.0v 연결
+  test: {
+    host: process.env.TEST_MYSQL_HOST,
+    port: process.env.TEST_MYSQL_PORT,
+    username: process.env.TEST_MYSQL_USERNAME,
+    password: process.env.TEST_MYSQL_PASSWORD,
+    database: process.env.TEST_MYSQL_DATABASE_NAME,
+    dialect: "mysql",
+    logging: false,
+  },
+
+  // [임시 배포 테스트] CloudType MariaDB 10.5v 연결
   mariaDB: {
     host: process.env.CT_MYSQL_HOST,
     port: process.env.CT_MYSQL_PORT,
@@ -23,6 +38,7 @@ module.exports = {
     logging: false,
   },
 
+  // [배포] AWS RDS MySQL 연결
   production: {
     host: process.env.RDS_MYSQL_HOST,
     port: process.env.RDS_MYSQL_PORT,
@@ -34,7 +50,7 @@ module.exports = {
   },
 
   init: function () {
-    const env = process.env.NODE_ENV || "mariaDB";
+    const env = process.env.NODE_ENV || "development";
     const config = this[env];
     return mysql.createConnection({
       host: config.host,

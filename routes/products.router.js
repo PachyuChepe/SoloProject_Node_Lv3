@@ -1,3 +1,5 @@
+// routes/products.router.js
+
 const express = require("express");
 const router = express.Router();
 const { User, Product, Sequelize } = require("../sequelize/models/index.js");
@@ -10,7 +12,7 @@ router.post("/product", isLoggedIn, async (req, res) => {
 
   try {
     if (!title || !content) {
-      return res.status(400).json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+      return res.status(400).json({ success: false, message: "필수 입력 정보가 누락되었습니다." });
     }
 
     const newItem = await Product.create({
@@ -51,7 +53,7 @@ router.get("/products", async (req, res) => {
     });
 
     if (getProduct.length === 0) {
-      return res.status(204).send({ success: false, message: "등록된 상품이 없습니다." });
+      return res.status(404).send({ success: false, message: "상품이 존재하지 않습니다." });
     }
 
     return res.status(200).json({ success: true, data: getProduct });
@@ -102,14 +104,14 @@ router.put("/product/:productId", isLoggedIn, async (req, res) => {
   const { title, content, status } = req.body;
 
   if (!title || !content || !status) {
-    return res.status(400).json({ success: false, message: "데이터 형식이 올바르지 않습니다." });
+    return res.status(400).json({ success: false, message: "필수 입력 정보가 누락되었습니다." });
   }
 
   try {
     const updateProduct = await Product.update({ title, content, status }, { where: { id: productId, user_id: id } });
 
     if (updateProduct[0] === 0) {
-      return res.status(404).json({ success: false, message: "상품이 존재하지 않거나 권한이 없습니다." });
+      return res.status(404).json({ success: false, message: "상품이 존재하지 않습니다." });
     }
 
     return res.status(200).json({ success: true, message: "상품 정보를 수정하였습니다." });
@@ -134,7 +136,7 @@ router.delete("/product/:productId", isLoggedIn, async (req, res) => {
     });
 
     if (!deleteItem) {
-      return res.status(404).json({ success: false, message: "상품이 존재하지 않거나 권한이 없습니다." });
+      return res.status(404).json({ success: false, message: "상품이 존재하지 않습니다." });
     }
 
     return res.status(200).json({ success: true, message: "상품을 삭제하였습니다." });

@@ -1,3 +1,5 @@
+// middleware/verifyToken.middleware.js
+
 const jwt = require("jsonwebtoken");
 const { User } = require("../sequelize/models/index.js");
 const env = require("../config/env.config.js");
@@ -8,7 +10,8 @@ exports.isLoggedIn = async (req, res, next) => {
 
   if (!authToken || authType !== "Bearer") {
     return res.status(401).send({
-      errorMessage: "로그인이 필요합니다.",
+      success: false,
+      message: "인증 헤더 형식이 올바르지 않습니다.",
     });
   }
 
@@ -17,7 +20,8 @@ exports.isLoggedIn = async (req, res, next) => {
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(401).send({
-        errorMessage: "인증된 사용자를 찾을 수 없습니다.",
+        success: false,
+        message: "인증된 사용자를 찾을 수 없습니다.",
       });
     }
     res.locals.user = user;
@@ -28,12 +32,14 @@ exports.isLoggedIn = async (req, res, next) => {
       // 임시로 헤더에 있는 쿠키를 터트리는 것으로 유사구현
       res.clearCookie("Authorization");
       return res.status(401).send({
-        errorMessage: "토큰이 만료되었습니다.",
+        success: false,
+        message: "토큰이 만료되었습니다.",
       });
     } else {
       console.error(err);
       return res.status(500).send({
-        errorMessage: "서버 오류가 발생했습니다.",
+        success: false,
+        message: "서버 오류가 발생했습니다.",
       });
     }
   }
@@ -52,7 +58,8 @@ exports.isNotLoggedIn = async (req, res, next) => {
     jwt.verify(authToken, env.JWT_SECRET);
 
     res.status(401).send({
-      errorMessage: "이미 로그인된 상태입니다",
+      success: false,
+      message: "이미 로그인된 상태입니다",
     });
   } catch (error) {
     next();

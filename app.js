@@ -1,3 +1,5 @@
+// app.js
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -31,7 +33,7 @@ const itemRouter = require("./routes/products.router.js");
 app.use("/", [userRouter, itemRouter]);
 
 // Swagger API 문서 설정
-const apiSpec = YAML.load("swagger.yaml");
+const apiSpec = YAML.load("swagger-fin.yaml");
 
 // Swagger API 로컬 서버 포트 변경
 apiSpec.servers = apiSpec.servers.map((server) => {

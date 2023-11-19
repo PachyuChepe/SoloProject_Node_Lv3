@@ -6,11 +6,13 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "start:ct": "cross-env NODE_ENV=mariaDB nodemon app.js",
     "start:rds": "cross-env NODE_ENV=production nodemon app.js",
     "resetdb": "npx sequelize db:drop && npx sequelize db:create && npx sequelize-cli db:migrate",
+    "resetdb:test": "cross-env NODE_ENV=test npx sequelize db:drop && cross-env NODE_ENV=test npx sequelize db:create && cross-env NODE_ENV=test npx sequelize-cli db:migrate",
     "resetdb:ct": "cross-env NODE_ENV=mariaDB npx sequelize db:drop && cross-env NODE_ENV=mariaDB npx sequelize db:create && cross-env NODE_ENV=mariaDB npx sequelize-cli db:migrate",
     "resetdb:rds": "cross-env NODE_ENV=production npx sequelize db:drop && cross-env NODE_ENV=production npx sequelize db:create && cross-env NODE_ENV=production npx sequelize-cli db:migrate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test mocha"
   },
   "keywords": [],
   "author": "",
@@ -33,5 +35,10 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0"
   }
 }
