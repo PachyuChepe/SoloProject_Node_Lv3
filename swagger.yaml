@@ -5,7 +5,7 @@ info:
   description: 사용자 관리 및 상품 관리 기능을 제공하는 API.
   version: 3.1.0
 servers:
-  - url: https://vitahub.xyz
+  - url: https://vitahub.kro.kr
     description: 배포 서버
   - url: https://localhost:4000
     description: 로컬 서버
