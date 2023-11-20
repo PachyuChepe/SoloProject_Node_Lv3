@@ -12,7 +12,9 @@
 # API 명세서 URL
 
 [ HTTP 배포 ] http://43.201.115.179/api-docs <br>
-[ HTTPS 배포 ] https://www.vitahub.site/api-docs <br>
+[ HTTPS 배포 ] https://www.vitahub.site/api-docs <br><br>
+접근 URL에 맞는 Servers 선택 후 기능 테스트 가능 <br><br>
+![스웨거](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbdj5Zg%2FbtsAEoSrZyz%2F1qnRaoaVgiI8iRKFs8miXK%2Fimg.png)
 <br><br>
 
 # ERD URL
