@@ -1,5 +1,6 @@
 module.exports = {
   extends: ["airbnb-base", "plugin:node/recommended", "prettier"],
+  ignorePatterns: ["sequelize/**/*"],
   rules: {
     "no-restricted-globals": "off",
     // 임포트 시 파일 확장자 입력 유무 확인
