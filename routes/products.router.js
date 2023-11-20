@@ -1,6 +1,7 @@
 // routes/products.router.js
 
 const express = require("express");
+
 const router = express.Router();
 const { User, Product, Sequelize } = require("../sequelize/models/index.js");
 const { isLoggedIn } = require("../middleware/verifyToken.middleware.js");
@@ -27,7 +28,7 @@ router.post("/product", isLoggedIn, async (req, res) => {
 
     return res.status(201).json({ success: true, message: "판매 상품을 등록하였습니다.", data: newItem });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res.status(500).json({ success: false, message: "상품 등록에 실패하였습니다." });
   }
 });
@@ -58,14 +59,14 @@ router.get("/products", async (req, res) => {
 
     return res.status(200).json({ success: true, data: getProduct });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return res.status(500).json({ success: false, message: "상품 목록 조회에 실패하였습니다." });
   }
 });
 
 // Read (상품 상세 조회)
 router.get("/product/:productId", async (req, res) => {
-  const productId = req.params.productId;
+  const { productId } = req.params;
 
   if (isNaN(productId)) {
     return res.status(400).json({ success: false, message: "잘못된 상품 ID입니다." });
@@ -92,14 +93,14 @@ router.get("/product/:productId", async (req, res) => {
 
     return res.status(200).json({ success: true, data: getProduct });
   } catch (err) {
-    console.log("조회 실패", err);
+    // console.log("조회 실패", err);
     return res.status(500).json({ success: false, message: "상품 조회에 실패하였습니다." });
   }
 });
 
 // Update (상품 정보 수정)
 router.put("/product/:productId", isLoggedIn, async (req, res) => {
-  const productId = req.params.productId;
+  const { productId } = req.params;
   const { id } = res.locals.user;
   const { title, content, status } = req.body;
 
@@ -116,14 +117,14 @@ router.put("/product/:productId", isLoggedIn, async (req, res) => {
 
     return res.status(200).json({ success: true, message: "상품 정보를 수정하였습니다." });
   } catch (err) {
-    console.log("뭐가문젠데", err);
+    // console.log("뭐가문젠데", err);
     return res.status(500).json({ success: false, message: "상품 수정에 실패하였습니다." });
   }
 });
 
 // Delete (상품 삭제)
 router.delete("/product/:productId", isLoggedIn, async (req, res) => {
-  const productId = req.params.productId;
+  const { productId } = req.params;
   const { id } = res.locals.user;
 
   if (isNaN(productId)) {
@@ -141,7 +142,7 @@ router.delete("/product/:productId", isLoggedIn, async (req, res) => {
 
     return res.status(200).json({ success: true, message: "상품을 삭제하였습니다." });
   } catch (err) {
-    console.log("뭐가문제임", err);
+    // console.log("뭐가문제임", err);
     return res.status(500).json({ success: false, message: "상품 삭제에 실패하였습니다." });
   }
 });

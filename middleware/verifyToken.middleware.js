@@ -7,6 +7,7 @@ const env = require("../config/env.config.js");
 exports.isLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
   const [authType, authToken] = (Authorization ?? "").split(" ");
+  // const [authType, authToken] = Authorization ? Authorization.split(" ") : "";
 
   if (!authToken || authType !== "Bearer") {
     return res.status(401).send({
@@ -36,7 +37,7 @@ exports.isLoggedIn = async (req, res, next) => {
         message: "토큰이 만료되었습니다.",
       });
     } else {
-      console.error(err);
+      // console.error(err);
       return res.status(500).send({
         success: false,
         message: "서버 오류가 발생했습니다.",
@@ -49,6 +50,7 @@ exports.isNotLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
 
   const [authType, authToken] = (Authorization ?? "").split(" ");
+  // const [authType, authToken] = Authorization ? Authorization.split(" ") : "";
 
   if (!authToken || authType !== "Bearer") {
     next();

@@ -1,10 +1,11 @@
 // routes/user.router.js
 
 const express = require("express");
+
 const router = express.Router();
-const { User } = require("../sequelize/models/index.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { User } = require("../sequelize/models/index.js");
 const env = require("../config/env.config.js");
 const { isLoggedIn, isNotLoggedIn } = require("../middleware/verifyToken.middleware.js");
 
@@ -45,7 +46,7 @@ router.post("/signup", isNotLoggedIn, async (req, res) => {
     const { password: _, ...userData } = user.toJSON();
     return res.status(201).json({ success: true, data: userData });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
@@ -70,7 +71,7 @@ router.post("/login", isNotLoggedIn, async (req, res) => {
     // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "Strict" });
     res.status(200).json({ success: true, message: "로그인 성공", token });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
@@ -89,7 +90,7 @@ router.get("/user", isLoggedIn, async (req, res) => {
       data: { email, name },
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
@@ -118,7 +119,7 @@ router.put("/user", isLoggedIn, async (req, res) => {
     await user.update({ password: hashedPassword, name });
     res.status(200).json({ success: true, message: "사용자 정보가 성공적으로 업데이트되었습니다." });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
@@ -135,7 +136,7 @@ router.delete("/user", isLoggedIn, async (req, res) => {
     res.clearCookie("Authorization");
     res.status(200).json({ success: true, message: "회원 탈퇴가 성공적으로 처리되었습니다." });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
