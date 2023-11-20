@@ -12,6 +12,7 @@ const swaggerUi = require("swagger-ui-express");
 // 환경 설정 및 데이터베이스 설정
 const env = require("./config/env.config.js");
 const dbConfig = require("./config/db.config.js");
+
 const conn = dbConfig.init();
 dbConfig.connect(conn);
 
@@ -25,17 +26,18 @@ app.use(
     origin: [
       `http://localhost:${env.SERVER_PORT}`,
       `https://localhost:${env.SERVER_PORT}`,
-      "http://vitahub.kro.kr",
-      "https://vitahub.kro.kr",
+      "http://www.vitahub.site",
+      "https://www.vitahub.site",
       "http://43.201.115.179",
     ],
     credentials: true,
-  })
+  }),
 );
 
 // 라우터 설정
 const userRouter = require("./routes/user.router.js");
 const itemRouter = require("./routes/products.router.js");
+
 app.use("/", [userRouter, itemRouter]);
 
 // Swagger API 문서 설정
@@ -63,7 +65,9 @@ app.get("/", (req, res) => {
 let server;
 if (fs.existsSync("./key.pem") && fs.existsSync("./cert.pem")) {
   const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
+
   const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
+
   const credentials = { key: privateKey, cert: certificate };
   server = https.createServer(credentials, app);
   server.listen(env.SERVER_PORT, () => console.log(`HTTPS server is running on port ${env.SERVER_PORT}`));

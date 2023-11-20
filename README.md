@@ -1,6 +1,7 @@
 # 배포 주소
 
-http://43.201.115.179
+[ HTTP 배포 ] http://43.201.115.179 <br>
+[ HTTPS 배포 ] https://www.vitahub.site <br>
 <br><br>
 
 # 환경변수
@@ -10,7 +11,8 @@ http://43.201.115.179
 
 # API 명세서 URL
 
-http://43.201.115.179/api-docs
+[ HTTP 배포 ] http://43.201.115.179/api-docs <br>
+[ HTTPS 배포 ] https://www.vitahub.site/api-docs <br>
 <br><br>
 
 # ERD URL

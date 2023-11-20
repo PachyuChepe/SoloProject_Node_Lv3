@@ -6,7 +6,9 @@ info:
   version: 3.1.0
 servers:
   - url: http://43.201.115.179
-    description: 배포 서버
+    description: HTTP 배포 서버
+  - url: https://www.vitahub.site
+    description: HTTPS 배포 서버
   - url: https://localhost:4000
     description: 로컬 서버
 tags:
