@@ -7,7 +7,7 @@
 git switch -c <브랜치명>
 git checkout -b <브랜치명>
 
-// ====================
+
 
 // 로컬 브랜치 이동
 git checkout <브랜치명>
@@ -21,7 +21,7 @@ git merge <병합할 브랜치 명>
 // 변경 사항 원격 저장소 푸시
 git push
 
-// ====================
+
 
 // 커밋 기록(commit log) 유지 & 레포지토리(Git Repository) 병합
 git clone <옮겨 담을 레포지토리 URL>
