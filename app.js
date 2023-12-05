@@ -34,9 +34,10 @@ app.use(
 // 라우터 설정
 const userRouter = require("./routes/user.router.js");
 const itemRouter = require("./routes/products.router.js");
+const errorHandler = require("./middleware/errorHandler.middleware");
 
 app.use("/api", [userRouter, itemRouter]);
-
+app.use(errorHandler);
 // Swagger API 문서 설정
 const apiSpec = YAML.load("swagger.yaml");
 apiSpec.servers = apiSpec.servers.map((server) => {

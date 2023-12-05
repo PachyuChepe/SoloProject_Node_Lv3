@@ -18,6 +18,7 @@ exports.isLoggedIn = async (req, res, next) => {
     const { userId } = jwt.verify(authToken, env.JWT_SECRET);
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
+      // res.clearCookie("Authorization");
       return res.status(401).send({
         success: false,
         message: "인증된 사용자를 찾을 수 없습니다.",
