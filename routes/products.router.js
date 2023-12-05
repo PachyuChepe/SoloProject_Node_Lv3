@@ -104,7 +104,7 @@ router.delete("/product/:productId", isLoggedIn, async (req, res) => {
 
   try {
     const deleteProduct = await prisma.product.deleteMany({
-      where: { id: parseInt(productId), userId: userId },
+      where: { id: parseInt(productId), userId },
     });
 
     if (deleteProduct.count === 0) {
