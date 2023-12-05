@@ -1,3 +1,5 @@
+// service/product.service.js
+
 const ProductRepository = require("../repository/product.repository");
 
 class ProductService {

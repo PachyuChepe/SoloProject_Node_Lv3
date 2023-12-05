@@ -1,3 +1,5 @@
+// controller/product.controller.js
+
 const ProductService = require("../service/product.service.js");
 
 class ProductController {

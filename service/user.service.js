@@ -1,3 +1,5 @@
+// service/user.service.js
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../config/env.config.js");
@@ -62,3 +64,18 @@ class UserService {
 }
 
 module.exports = UserService;
+
+// Service Layer 역할
+// 비즈니스 로직을 수행
+// 애플리케이션의 핵심 기능을 구현하고, 데이터 처리 및 계산 등을 담당
+
+// Service Layer 특징
+// 서비스 계층은 데이터베이스와 직접적으로 상호작용하지 않지만 리포지토리 계층에 데이터베이스와의 상호작용을 위임
+
+// 클래스 및 화살표 함수 사용 이유
+// 1. 클래스 사용
+// 클래스를 사용하면 코드의 재사용성, 가독성, 유지 보수가 쉬움
+// 클래스는 관련된 데이터와 함수를 함께 묶어주며, 객체 지향 프로그래밍의 이점을 제공
+
+// 2. 화살표 함수
+// 화살표 함수는 간결한 문법을 가지고 있으며, this의 범위가 렉시컬 범위로 한정되어 클래스 내에서 this의 혼란을 줄일 수 있음

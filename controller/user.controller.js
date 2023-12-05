@@ -1,3 +1,5 @@
+// controller/user.controller.js
+
 const UserService = require("../service/user.service.js");
 
 class UserController {
@@ -64,3 +66,18 @@ class UserController {
 }
 
 module.exports = UserController;
+
+// Controller Layer의 역할
+// HTTP 요청을 받고 적절한 응답을 반환
+// 사용자의 입력을 처리하고, 해당 입력을 서비스 계층으로 전달하며, 서비스 계층의 결과를 클라이언트에게 응답
+
+// Controller Layer의 특징
+// 웹 요청과 응답에 관한 로직만 포함하며, 비즈니스 로직은 포함하지 않음
+
+// 클래스 및 화살표 함수 사용 이유
+// 1. 클래스 사용
+// 클래스를 사용하면 코드의 재사용성, 가독성, 유지 보수가 쉬움
+// 클래스는 관련된 데이터와 함수를 함께 묶어주며, 객체 지향 프로그래밍의 이점을 제공
+
+// 2. 화살표 함수
+// 화살표 함수는 간결한 문법을 가지고 있으며, this의 범위가 렉시컬 범위로 한정되어 클래스 내에서 this의 혼란을 줄일 수 있음
