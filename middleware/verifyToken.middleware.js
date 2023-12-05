@@ -27,7 +27,21 @@ exports.isLoggedIn = async (req, res, next) => {
     res.locals.user = user;
     next();
   } catch (err) {
-    // 기존의 catch 블록 로직 유지
+    if (err instanceof jwt.TokenExpiredError) {
+      // JWT토큰이 만료될 경우 엑세스 토큰과 리프레시 토큰을 통해서 재발급 받아야되지만
+      // 임시로 헤더에 있는 쿠키를 터트리는 것으로 유사구현
+      res.clearCookie("Authorization");
+      return res.status(401).send({
+        success: false,
+        message: "토큰이 만료되었습니다.",
+      });
+    } else {
+      // console.error(err);
+      return res.status(500).send({
+        success: false,
+        message: "서버 오류가 발생했습니다.",
+      });
+    }
   }
 };
 
