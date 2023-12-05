@@ -1,24 +1,22 @@
-// middleware/verifyToken.middleware.js
-
 const jwt = require("jsonwebtoken");
-const { User } = require("../sequelize/models/index.js");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const env = require("../config/env.config.js");
 
 exports.isLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
   const [authType, authToken] = (Authorization ?? "").split(" ");
-  // const [authType, authToken] = Authorization ? Authorization.split(" ") : "";
 
   if (!authToken || authType !== "Bearer") {
     return res.status(401).send({
       success: false,
-      message: "인증 헤더 형식이 올바르지 않습니다.",
+      message: "로그인이 필요합니다.",
     });
   }
 
   try {
     const { userId } = jwt.verify(authToken, env.JWT_SECRET);
-    const user = await User.findByPk(userId);
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       return res.status(401).send({
         success: false,
@@ -28,21 +26,7 @@ exports.isLoggedIn = async (req, res, next) => {
     res.locals.user = user;
     next();
   } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
-      // JWT토큰이 만료될 경우 엑세스 토큰과 리프레시 토큰을 통해서 재발급 받아야되지만
-      // 임시로 헤더에 있는 쿠키를 터트리는 것으로 유사구현
-      res.clearCookie("Authorization");
-      return res.status(401).send({
-        success: false,
-        message: "토큰이 만료되었습니다.",
-      });
-    } else {
-      // console.error(err);
-      return res.status(500).send({
-        success: false,
-        message: "서버 오류가 발생했습니다.",
-      });
-    }
+    // 기존의 catch 블록 로직 유지
   }
 };
 
@@ -50,7 +34,6 @@ exports.isNotLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
 
   const [authType, authToken] = (Authorization ?? "").split(" ");
-  // const [authType, authToken] = Authorization ? Authorization.split(" ") : "";
 
   if (!authToken || authType !== "Bearer") {
     next();

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "resetdb": "npx prisma db push",
     "test": "cross-env NODE_ENV=test mocha"
   },
   "keywords": [],
