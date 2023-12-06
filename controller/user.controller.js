@@ -1,6 +1,7 @@
 // controller/user.controller.js
 
 const UserService = require("../service/user.service.js");
+const redisClient = require("../redis/redisClient.js");
 
 class UserController {
   constructor() {
@@ -19,9 +20,9 @@ class UserController {
 
   login = async (req, res, next) => {
     try {
-      const { token, user } = await this.userService.login(req.body);
-      res.cookie("Authorization", `Bearer ${token}`);
-      res.status(200).json({ success: true, message: "로그인 성공", token, user: { id: user.id, email: user.email, name: user.name } });
+      const { accessToken, user } = await this.userService.login(req.body);
+      res.cookie("Authorization", `Bearer ${accessToken}`);
+      res.status(200).json({ success: true, message: "로그인 성공", accessToken, user: { id: user.id, email: user.email, name: user.name } });
     } catch (error) {
       next(error);
     }
@@ -63,16 +64,32 @@ class UserController {
     try {
       await this.userService.deleteUser(res.locals.user.id);
       res.clearCookie("Authorization");
+      await redisClient.del(res.locals.user.id.toString());
       res.status(200).json({ success: true, message: "회원 탈퇴가 성공적으로 처리되었습니다." });
     } catch (error) {
       next(error);
     }
   };
 
-  logout = (req, res) => {
-    res.clearCookie("Authorization");
-    res.status(200).json({ success: true, message: "로그아웃 성공" });
+  logout = async (req, res, next) => {
+    try {
+      // 사용자 ID를 통해 리프레시 토큰 삭제
+      await redisClient.del(res.locals.user.id.toString());
+
+      // 클라이언트 측 쿠키 삭제
+      res.clearCookie("Authorization");
+
+      res.status(200).json({ success: true, message: "로그아웃 성공" });
+    } catch (error) {
+      next(error);
+    }
   };
+
+  // logout = (req, res) => {
+  //   res.clearCookie("Authorization");
+  //   console.log(res);
+  //   res.status(200).json({ success: true, message: "로그아웃 성공" });
+  // };
 }
 
 module.exports = UserController;

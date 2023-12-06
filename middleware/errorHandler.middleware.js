@@ -1,3 +1,5 @@
+// middleware/errorHandler.middleware.js
+
 const ApiError = require("../error/api.error.js");
 
 const errorHandler = (err, req, res, next) => {

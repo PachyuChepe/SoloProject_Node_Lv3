@@ -27,6 +27,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.5",
     "prisma": "^5.6.0",
+    "redis": "^4.6.11",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "yamljs": "^0.3.0"

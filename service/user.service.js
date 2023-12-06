@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const env = require("../config/env.config.js");
 const UserRepository = require("../repository/user.repository.js");
 const ApiError = require("../error/api.error.js");
+const redisClient = require("../redis/redisClient.js");
 
 class UserService {
   constructor() {
@@ -35,8 +36,11 @@ class UserService {
       throw ApiError.Unauthorized("패스워드가 일치하지 않습니다.");
     }
 
-    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "12h" });
-    return { token, user };
+    const accessToken = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "12h" });
+    const refreshToken = jwt.sign({ userId: user.id }, env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
+    await redisClient.set(user.id.toString(), refreshToken, "EX", 60 * 60 * 24 * 7);
+
+    return { accessToken, user };
   };
 
   getUser = async (id) => {
