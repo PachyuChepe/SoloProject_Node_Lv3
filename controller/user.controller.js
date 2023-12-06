@@ -30,9 +30,6 @@ class UserController {
   getUser = async (req, res, next) => {
     try {
       const user = await this.userService.getUser(res.locals.user.id);
-      if (!user) {
-        return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다" });
-      }
       const { password, ...data } = user;
       res.status(200).json({ success: true, data });
     } catch (error) {
@@ -40,9 +37,22 @@ class UserController {
     }
   };
 
+  // getUser = async (req, res, next) => {
+  //   try {
+  //     const user = await this.userService.getUser(res.locals.user.id);
+  //     if (!user) {
+  //       return res.status(404).json({ success: false, message: "사용자 정보를 찾을 수 없습니다" });
+  //     }
+  //     const { password, ...data } = user;
+  //     res.status(200).json({ success: true, data });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
+
   updateUser = async (req, res, next) => {
     try {
-      await this.userService.updateUser(res.locals.user.id, req.body.currentPassword, req.body);
+      await this.userService.updateUser(res.locals.user.id, req.body);
       res.status(200).json({ success: true, message: "사용자 정보가 성공적으로 업데이트되었습니다." });
     } catch (error) {
       next(error);

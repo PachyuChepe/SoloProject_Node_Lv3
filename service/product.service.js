@@ -1,5 +1,4 @@
 // service/product.service.js
-
 const ProductRepository = require("../repository/product.repository.js");
 const ApiError = require("../error/api.error.js");
 
@@ -9,10 +8,6 @@ class ProductService {
   }
 
   createProduct = async (userId, productData) => {
-    if (!productData.title) {
-      throw ApiError.BadRequest("제목은 필수 항목입니다.");
-    }
-
     return await this.productRepository.createProduct({
       ...productData,
       userId,

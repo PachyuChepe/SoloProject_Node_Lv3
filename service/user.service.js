@@ -1,5 +1,4 @@
 // service/user.service.js
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../config/env.config.js");
@@ -11,10 +10,10 @@ class UserService {
     this.userRepository = new UserRepository();
   }
 
-  signUp = async ({ email, password, name }) => {
+  signUp = async ({ email, password, confirmPassword, name }) => {
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
-      throw ApiError.BadRequest("이미 사용 중인 이메일입니다");
+      throw ApiError.Conflict("이미 사용 중인 이메일입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,12 +27,12 @@ class UserService {
   login = async ({ email, password }) => {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
-      throw ApiError.BadRequest("사용자 정보를 찾을 수 없습니다.");
+      throw ApiError.NotFound("사용자 정보를 찾을 수 없습니다.");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw ApiError.BadRequest("패스워드가 일치하지 않습니다.");
+      throw ApiError.Unauthorized("패스워드가 일치하지 않습니다.");
     }
 
     const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "12h" });
@@ -41,10 +40,18 @@ class UserService {
   };
 
   getUser = async (id) => {
-    return await this.userRepository.findUserById(id);
+    const user = await this.userRepository.findUserById(id);
+    if (!user) {
+      throw ApiError.NotFound("사용자 정보를 찾을 수 없습니다");
+    }
+    return user;
   };
 
-  updateUser = async (id, currentPassword, { newPassword, name }) => {
+  // getUser = async (id) => {
+  //   return await this.userRepository.findUserById(id);
+  // };
+
+  updateUser = async (id, { currentPassword, newPassword, name }) => {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
       throw ApiError.NotFound("사용자 정보를 찾을 수 없습니다.");
@@ -52,7 +59,7 @@ class UserService {
 
     const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
     if (!isPasswordValid) {
-      throw ApiError.BadRequest("현재 비밀번호가 일치하지 않습니다.");
+      throw ApiError.Unauthorized("현재 비밀번호가 일치하지 않습니다.");
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

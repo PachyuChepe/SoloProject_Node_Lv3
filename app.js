@@ -58,19 +58,24 @@ app.get("/", (req, res) => {
 });
 
 // 데이터베이스 연결 확인 및 서버 시작
-checkDatabaseConnection().then(() => {
-  let server;
-  if (fs.existsSync("./key.pem") && fs.existsSync("./cert.pem")) {
-    const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
-    const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
-    const credentials = { key: privateKey, cert: certificate };
-    server = https.createServer(credentials, app);
-    server.listen(env.SERVER_PORT, () => {
-      console.log(`HTTPS server is running on port ${env.SERVER_PORT}`);
-    });
-  } else {
-    server = app.listen(env.SERVER_PORT, () => {
-      console.log(`HTTP server is running on port ${env.SERVER_PORT}`);
-    });
-  }
-});
+checkDatabaseConnection()
+  .then(() => {
+    let server;
+    if (fs.existsSync("./key.pem") && fs.existsSync("./cert.pem")) {
+      const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
+      const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
+      const credentials = { key: privateKey, cert: certificate };
+      server = https.createServer(credentials, app);
+      server.listen(env.SERVER_PORT, () => {
+        console.log(`HTTPS server is running on port ${env.SERVER_PORT}`);
+      });
+    } else {
+      server = app.listen(env.SERVER_PORT, () => {
+        console.log(`HTTP server is running on port ${env.SERVER_PORT}`);
+      });
+    }
+  })
+  .catch((error) => {
+    console.error("서버 시작 실패", error);
+    process.exit(1);
+  });
