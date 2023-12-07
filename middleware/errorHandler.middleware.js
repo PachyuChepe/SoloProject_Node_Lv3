@@ -1,6 +1,6 @@
 // middleware/errorHandler.middleware.js
 
-const ApiError = require("../error/api.error.js");
+const ApiError = require("./apiError.middleware.js");
 const winston = require("winston");
 const { format } = require("logform");
 

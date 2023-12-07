@@ -1,6 +1,6 @@
 // middleware/user.validation.middleware.js
 
-const ApiError = require("../error/api.error.js");
+const ApiError = require("./apiError.middleware.js");
 
 const validateSignup = (req, res, next) => {
   const { email, password, confirmPassword, name } = req.body;

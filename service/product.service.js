@@ -1,6 +1,6 @@
 // service/product.service.js
 const ProductRepository = require("../repository/product.repository.js");
-const ApiError = require("../error/api.error.js");
+const ApiError = require("../middleware/apiError.middleware.js");
 
 class ProductService {
   constructor() {

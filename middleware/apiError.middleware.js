@@ -1,4 +1,4 @@
-// error/api.error.js
+// middleware/apiError.middleware.js
 
 class ApiError extends Error {
   constructor(status, message) {

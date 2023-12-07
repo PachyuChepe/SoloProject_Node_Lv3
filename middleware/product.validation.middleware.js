@@ -1,6 +1,6 @@
 // middleware/product.validation.middleware.js
 
-const ApiError = require("../error/api.error.js");
+const ApiError = require("./apiError.middleware.js");
 
 const validateCreateProduct = (req, res, next) => {
   const { title, content } = req.body;

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../config/env.config.js");
 const UserRepository = require("../repository/user.repository.js");
-const ApiError = require("../error/api.error.js");
+const ApiError = require("../middleware/apiError.middleware.js");
 const redisClient = require("../redis/redisClient.js");
 
 class UserService {
