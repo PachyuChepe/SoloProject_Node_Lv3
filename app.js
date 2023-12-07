@@ -19,21 +19,6 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 morganConfig(app);
-// app.use(morgan("dev"));
-
-// // HTTP 상태 코드가 4xx와 5xx인 경우만 winston에 로그
-// morgan.token("status", (req, res) => {
-//   return res.statusCode;
-// });
-
-// app.use(
-//   morgan((tokens, req, res) => {
-//     const status = tokens.status(req, res);
-//     if (status >= 400 && status < 600) {
-//       logger.error(`${tokens.method(req, res)} ${tokens.url(req, res)} ${status} ${tokens["response-time"](req, res)}ms`);
-//     }
-//   }),
-// );
 
 app.use(
   cors({

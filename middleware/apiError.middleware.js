@@ -43,6 +43,12 @@ class ApiError extends Error {
     return new ApiError(409, message);
   }
 
+  // 422 Unprocessable Entity: 요청 형식은 올바르지만, 처리할 수 없는 내용을 포함할 때 사용
+  // Ex. 입력 값의 형식은 맞으나 내용이 잘못된 경우
+  static UnprocessableEntity(message) {
+    return new ApiError(422, message);
+  }
+
   // 500 Internal Server Error: 서버가 처리할 수 없는 오류가 발생했을 때 사용
   // Ex. 데이터베이스 오류 또는 서버 코드의 예외 상황
   static InternalError(message) {

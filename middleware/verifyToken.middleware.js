@@ -40,7 +40,6 @@ exports.isLoggedIn = async (req, res, next) => {
         jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
 
         const newAccessToken = jwt.sign({ userId: userId }, env.JWT_SECRET, { expiresIn: "12h" });
-        console.log("재발급되니?", newAccessToken);
         res.cookie("Authorization", `Bearer ${newAccessToken}`);
         const user = await prisma.user.findUnique({ where: { id: userId } });
         res.locals.user = user;
