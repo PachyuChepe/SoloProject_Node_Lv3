@@ -9,6 +9,7 @@ const fs = require("fs");
 const YAML = require("yamljs");
 const swaggerUi = require("swagger-ui-express");
 const { checkDatabaseConnection } = require("./config/db.config.js");
+const morganConfig = require("./config/morgan.config.js");
 
 // 환경 설정 및 데이터베이스 설정
 const env = require("./config/env.config.js");
@@ -17,7 +18,23 @@ const env = require("./config/env.config.js");
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(morgan("dev"));
+morganConfig(app);
+// app.use(morgan("dev"));
+
+// // HTTP 상태 코드가 4xx와 5xx인 경우만 winston에 로그
+// morgan.token("status", (req, res) => {
+//   return res.statusCode;
+// });
+
+// app.use(
+//   morgan((tokens, req, res) => {
+//     const status = tokens.status(req, res);
+//     if (status >= 400 && status < 600) {
+//       logger.error(`${tokens.method(req, res)} ${tokens.url(req, res)} ${status} ${tokens["response-time"](req, res)}ms`);
+//     }
+//   }),
+// );
+
 app.use(
   cors({
     origin: [

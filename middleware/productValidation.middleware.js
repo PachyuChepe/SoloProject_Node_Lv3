@@ -1,4 +1,4 @@
-// middleware/product.validation.middleware.js
+// middleware/productValidation.middleware.js
 
 const ApiError = require("./apiError.middleware.js");
 

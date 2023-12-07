@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require("../middleware/verifyToken.middleware.js");
-const { validateSignup, validateLogin, validateUpdateUser } = require("../middleware/user.validation.middleware.js");
+const { validateSignup, validateLogin, validateUpdateUser } = require("../middleware/userValidation.middleware.js");
 const UserController = require("../controller/user.controller.js");
 
 const userController = new UserController();

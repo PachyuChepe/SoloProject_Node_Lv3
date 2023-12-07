@@ -10,7 +10,7 @@ const {
   validateProductId,
   validateUpdateProduct,
   validateDeleteProduct,
-} = require("../middleware/product.validation.middleware.js");
+} = require("../middleware/productValidation.middleware.js");
 const productController = new ProductController();
 
 router.post("/product", isLoggedIn, validateCreateProduct, productController.createProduct);

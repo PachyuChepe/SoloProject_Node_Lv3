@@ -1,41 +1,7 @@
 // middleware/errorHandler.middleware.js
 
 const ApiError = require("./apiError.middleware.js");
-const winston = require("winston");
-const { format } = require("logform");
-
-const logFormat = format.combine(
-  format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-  format.errors({ stack: true }),
-  format.printf((info) => {
-    // 보다 읽기 쉬운 형식으로 로그 메시지 구성
-    return `${info.timestamp} [${info.level.toUpperCase()}]: ${info.message}\nRequest Info: ${JSON.stringify(
-      {
-        method: info.method,
-        path: info.path,
-        body: info.body,
-        query: info.query,
-        params: info.params,
-      },
-      null,
-      2,
-    )}\nStack Trace: ${info.stack}`;
-  }),
-);
-
-const logger = winston.createLogger({
-  level: "error",
-  format: logFormat,
-  transports: [new winston.transports.File({ filename: "error.log", level: "error" })],
-});
-
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
-    }),
-  );
-}
+const logger = require("../config/winston.config.js");
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof ApiError) {

@@ -1,13 +1,13 @@
-// middleware/user.validation.middleware.js
+// middleware/userValidation.middleware.js
 
 const ApiError = require("./apiError.middleware.js");
 
 const validateSignup = (req, res, next) => {
   const { email, password, confirmPassword, name } = req.body;
 
-  if (!email || !password || !confirmPassword || !name) {
-    throw ApiError.BadRequest("필수 입력 정보가 누락되었습니다.");
-  }
+  // if (!email || !password || !confirmPassword || !name) {
+  //   throw ApiError.BadRequest("필수 입력 정보가 누락되었습니다.");
+  // }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
