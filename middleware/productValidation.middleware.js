@@ -2,6 +2,7 @@
 
 const ApiError = require("./apiError.middleware.js");
 
+// 상품 생성 요청의 유효성을 검증하는 미들웨어
 const validateCreateProduct = (req, res, next) => {
   const { title, content } = req.body;
 
@@ -12,6 +13,7 @@ const validateCreateProduct = (req, res, next) => {
   next();
 };
 
+// 상품 목록 조회 요청의 유효성을 검증하는 미들웨어
 const validateGetAllProducts = (req, res, next) => {
   const sort = req.query.sort ? req.query.sort.toUpperCase() : "DESC";
 
@@ -22,6 +24,7 @@ const validateGetAllProducts = (req, res, next) => {
   next();
 };
 
+// 상품 ID의 유효성을 검증하는 미들웨어
 const validateProductId = (req, res, next) => {
   const { productId } = req.params;
 
@@ -32,6 +35,7 @@ const validateProductId = (req, res, next) => {
   next();
 };
 
+// 상품 업데이트 요청의 유효성을 검증하는 미들웨어
 const validateUpdateProduct = (req, res, next) => {
   const { title, content, status } = req.body;
 
@@ -42,6 +46,7 @@ const validateUpdateProduct = (req, res, next) => {
   next();
 };
 
+// 상품 삭제 요청의 유효성을 검증하는 미들웨어
 const validateDeleteProduct = (req, res, next) => {
   const { productId } = req.params;
 

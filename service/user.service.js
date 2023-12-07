@@ -6,11 +6,17 @@ const UserRepository = require("../repository/user.repository.js");
 const ApiError = require("../middleware/apiError.middleware.js");
 const redisClient = require("../redis/redisClient.js");
 
+// 사용자 관련 비즈니스 로직을 수행하는 서비스 클래스
 class UserService {
   constructor() {
     this.userRepository = new UserRepository();
   }
 
+  /**
+   * 새 사용자를 등록하고 생성된 사용자 정보를 반환
+   * @param {object} signUpData - 등록할 사용자 데이터
+   * @returns {Promise<object>} 생성된 사용자 정보
+   */
   signUp = async ({ email, password, confirmPassword, name }) => {
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
@@ -25,6 +31,11 @@ class UserService {
     });
   };
 
+  /**
+   * 사용자 로그인을 처리하고 토큰 및 사용자 정보를 반환
+   * @param {object} loginData - 로그인 정보
+   * @returns {Promise<object>} 토큰 및 사용자 정보
+   */
   login = async ({ email, password }) => {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
@@ -43,6 +54,11 @@ class UserService {
     return { accessToken, user };
   };
 
+  /**
+   * 특정 ID의 사용자 정보를 조회하고 반환
+   * @param {number} id - 사용자 ID
+   * @returns {Promise<object>} 조회된 사용자 정보
+   */
   getUser = async (id) => {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
@@ -51,6 +67,12 @@ class UserService {
     return user;
   };
 
+  /**
+   * 사용자 정보를 업데이트하고 결과를 반환
+   * @param {number} id - 사용자 ID
+   * @param {object} updateData - 업데이트할 사용자 데이터
+   * @returns {Promise<object>} 업데이트된 사용자 정보
+   */
   updateUser = async (id, { currentPassword, newPassword, name }) => {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
@@ -66,6 +88,11 @@ class UserService {
     return await this.userRepository.updateUser(id, { password: hashedPassword, name });
   };
 
+  /**
+   * 사용자를 삭제하고 결과를 반환
+   * @param {number} id - 사용자 ID
+   * @returns {Promise<object>} 삭제 결과
+   */
   deleteUser = async (id) => {
     return await this.userRepository.deleteUser(id);
   };

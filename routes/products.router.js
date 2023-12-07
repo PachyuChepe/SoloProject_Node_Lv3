@@ -11,6 +11,7 @@ const {
   validateUpdateProduct,
   validateDeleteProduct,
 } = require("../middleware/productValidation.middleware.js");
+
 const productController = new ProductController();
 
 router.post("/product", isLoggedIn, validateCreateProduct, productController.createProduct);

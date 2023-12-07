@@ -2,6 +2,7 @@
 
 const ApiError = require("./apiError.middleware.js");
 
+// 회원가입 요청의 유효성을 검증하는 미들웨어
 const validateSignup = (req, res, next) => {
   const { email, password, confirmPassword, name } = req.body;
 
@@ -25,6 +26,7 @@ const validateSignup = (req, res, next) => {
   next();
 };
 
+// 로그인 요청의 유효성을 검증하는 미들웨어
 const validateLogin = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -35,6 +37,7 @@ const validateLogin = (req, res, next) => {
   next();
 };
 
+// 사용자 정보 업데이트 요청의 유효성을 검증하는 미들웨어
 const validateUpdateUser = (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
 

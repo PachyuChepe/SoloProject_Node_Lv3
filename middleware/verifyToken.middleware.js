@@ -6,10 +6,12 @@ const prisma = new PrismaClient();
 const env = require("../config/env.config.js");
 const redisClient = require("../redis/redisClient.js");
 
+// 로그인된 사용자를 확인하는 미들웨어
 exports.isLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
   const [authType, authToken] = (Authorization ?? "").split(" ");
 
+  // 토큰 유효성 검증
   if (!authToken || authType !== "Bearer") {
     return res.status(401).send({
       success: false,
@@ -26,8 +28,8 @@ exports.isLoggedIn = async (req, res, next) => {
     res.locals.user = user;
     next();
   } catch (err) {
+    // 토큰 만료 시 새로운 토큰 생성 및 재검증
     if (err instanceof jwt.TokenExpiredError) {
-      // 액세스 토큰에서 사용자 ID 추출
       const decoded = jwt.decode(authToken);
       const userId = decoded.userId;
 
@@ -61,6 +63,7 @@ exports.isLoggedIn = async (req, res, next) => {
   }
 };
 
+// 로그인되지 않은 사용자를 확인하는 미들웨어
 exports.isNotLoggedIn = async (req, res, next) => {
   const { Authorization } = req.cookies;
 
