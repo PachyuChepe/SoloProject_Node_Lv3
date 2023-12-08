@@ -3,21 +3,19 @@ openapi: 3.0.0
 info:
   title: 사용자 및 상품 관리 API
   description: 사용자 관리 및 상품 관리 기능을 제공하는 API.
-  version: 3.1.0
+  version: 3.5.0
 servers:
-  - url: http://43.201.115.179
-    description: HTTP 배포 서버
-  - url: https://www.vitahub.site
+  - url: https://www.vitahub.xyz
     description: HTTPS 배포 서버
   - url: https://localhost:4000
-    description: 로컬 서버
+    description: HTTPS 로컬 서버
 tags:
   - name: Users
     description: 회원 관련 엔드포인트
   - name: Products
     description: 상품 관련 엔드포인트
 paths:
-  /signup:
+  /api/signup:
     post:
       tags:
         - Users
@@ -27,7 +25,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/signup_body"
+              $ref: "#/components/schemas/api_signup_body"
         required: true
       responses:
         "201":
@@ -82,7 +80,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/inline_response_500"
-  /login:
+  /api/login:
     post:
       tags:
         - Users
@@ -92,7 +90,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/login_body"
+              $ref: "#/components/schemas/api_login_body"
         required: true
       responses:
         "200":
@@ -128,7 +126,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/inline_response_500"
-  /user:
+  /api/user:
     get:
       tags:
         - Users
@@ -151,15 +149,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 사용자 정보를 찾을 수 없음
           content:
@@ -183,7 +181,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/user_body"
+              $ref: "#/components/schemas/api_user_body"
         required: true
       responses:
         "200":
@@ -208,15 +206,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
                 passwordMismatch:
                   value:
                     success: false
@@ -257,15 +255,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 사용자 정보를 찾을 수 없음
           content:
@@ -280,7 +278,7 @@ paths:
                 $ref: "#/components/schemas/inline_response_500"
       security:
         - bearerAuth: []
-  /logout:
+  /api/logout:
     post:
       tags:
         - Users
@@ -303,18 +301,18 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
       security:
         - bearerAuth: []
-  /product:
+  /api/product:
     post:
       tags:
         - Products
@@ -324,7 +322,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/product_body"
+              $ref: "#/components/schemas/api_product_body"
         required: true
       responses:
         "201":
@@ -349,15 +347,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "500":
           description: 상품 등록 실패 또는 서버 오류
           content:
@@ -366,7 +364,7 @@ paths:
                 $ref: "#/components/schemas/inline_response_500_1"
       security:
         - bearerAuth: []
-  /products:
+  /api/products:
     get:
       tags:
         - Products
@@ -407,15 +405,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 상품이 존재하지 않음
           content:
@@ -430,7 +428,7 @@ paths:
                 $ref: "#/components/schemas/inline_response_500_2"
       security:
         - bearerAuth: []
-  /product/{productId}:
+  /api/product/{productId}:
     get:
       tags:
         - Products
@@ -468,15 +466,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 상품이 존재하지 않음
           content:
@@ -534,15 +532,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 상품이 존재하지 않음
           content:
@@ -594,15 +592,15 @@ paths:
                 authFailure:
                   value:
                     success: false
-                    message: 인증 헤더 형식이 올바르지 않습니다.
+                    message: 로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.
                 userNotFound:
                   value:
                     success: false
-                    message: 인증된 사용자를 찾을 수 없습니다.
+                    message: 로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요.
                 tokenExpired:
                   value:
                     success: false
-                    message: 토큰이 만료되었습니다.
+                    message: 로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.
         "404":
           description: 상품이 존재하지 않음
           content:
@@ -637,16 +635,6 @@ components:
         message:
           type: string
           example: 잘못된 정렬 방식입니다.
-    product_body:
-      required:
-        - content
-        - title
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
     inline_response_404_2:
       type: object
       properties:
@@ -702,23 +690,6 @@ components:
         message:
           type: string
           example: 상품 조회에 실패하였습니다.
-    signup_body:
-      required:
-        - confirmPassword
-        - email
-        - name
-        - password
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-        confirmPassword:
-          type: string
-        name:
-          type: string
     inline_response_500_2:
       type: object
       properties:
@@ -737,6 +708,19 @@ components:
         message:
           type: string
           example: 상품 등록에 실패하였습니다.
+    api_user_body:
+      required:
+        - currentPassword
+        - name
+        - newPassword
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+        name:
+          type: string
     inline_response_200_6_data_User:
       type: object
       properties:
@@ -783,6 +767,17 @@ components:
           example: true
         data:
           $ref: "#/components/schemas/inline_response_201_data"
+    api_login_body:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
     inline_response_200:
       type: object
       properties:
@@ -816,7 +811,7 @@ components:
           example: false
         message:
           type: string
-          example: 서버 오류가 발생했습니다.
+          example: 서버 처리 중 오류가 발생했습니다. 문제가 지속되면 지원팀에 문의해주세요.
     inline_response_400_2:
       type: object
       properties:
@@ -842,19 +837,6 @@ components:
         message:
           type: string
           example: "비밀번호는 최소 6자 이상이며, 대소문자, 숫자, 하나 이상의 특수문자를 포함해야 합니다."
-    user_body:
-      required:
-        - currentPassword
-        - name
-        - newPassword
-      type: object
-      properties:
-        currentPassword:
-          type: string
-        newPassword:
-          type: string
-        name:
-          type: string
     inline_response_404:
       type: object
       properties:
@@ -949,17 +931,6 @@ components:
           type: string
           format: date-time
           example: 2023-01-01T00:00:00Z
-    login_body:
-      required:
-        - email
-        - password
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
     inline_response_200_1:
       type: object
       properties:
@@ -1023,6 +994,33 @@ components:
         message:
           type: string
           example: 로그아웃 성공
+    api_product_body:
+      required:
+        - content
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    api_signup_body:
+      required:
+        - confirmPassword
+        - email
+        - name
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        confirmPassword:
+          type: string
+        name:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http
