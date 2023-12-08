@@ -18,7 +18,7 @@ exports.isLoggedIn = async (req, res, next) => {
     // throw ApiError.Unauthorized("재로그인이 필요합니다.");
     return res.status(401).send({
       success: false,
-      message: "로그인이 필요합니다.",
+      message: "로그인 정보가 없거나 형식이 올바르지 않습니다. 다시 로그인해주세요.",
     });
   }
 
@@ -39,7 +39,7 @@ exports.isLoggedIn = async (req, res, next) => {
       const refreshToken = await redisClient.get(userId.toString());
       if (!refreshToken) {
         // throw ApiError.Unauthorized("재로그인이 필요합니다.");
-        return res.status(401).send({ success: false, message: "재로그인이 필요합니다." });
+        return res.status(401).send({ success: false, message: "로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해주세요." });
       }
 
       try {
@@ -56,14 +56,14 @@ exports.isLoggedIn = async (req, res, next) => {
         // throw ApiError.Unauthorized("재로그인이 필요합니다.");
         return res.status(401).send({
           success: false,
-          message: "재로그인이 필요합니다.",
+          message: "로그인 정보를 갱신하는 데 실패했습니다. 다시 로그인해주세요.",
         });
       }
     } else {
       // throw ApiError.InternalError("서버 오류가 발생했습니다.");
       res.status(500).send({
         success: false,
-        message: "서버 오류가 발생했습니다.",
+        message: "서버 처리 중 오류가 발생했습니다. 문제가 지속되면 지원팀에 문의해주세요.",
       });
     }
   }

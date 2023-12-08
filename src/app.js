@@ -22,13 +22,7 @@ morganConfig(app);
 // CORS 설정
 app.use(
   cors({
-    origin: [
-      `http://localhost:${env.SERVER_PORT}`,
-      `https://localhost:${env.SERVER_PORT}`,
-      "http://www.vitahub.site",
-      "https://www.vitahub.site",
-      "http://43.201.115.179",
-    ],
+    origin: [`http://localhost:${env.SERVER_PORT}`, `https://localhost:${env.SERVER_PORT}`, "http://www.vitahub.xyz", "https://www.vitahub.xyz"],
     credentials: true,
   }),
 );
@@ -41,7 +35,7 @@ app.use("/api", [userRouter, itemRouter]);
 app.use(errorHandler);
 
 // Swagger API 문서화 설정
-const apiSpec = YAML.load("swagger.yaml");
+const apiSpec = YAML.load("api-docs/swagger.yaml");
 apiSpec.servers = apiSpec.servers.map((server) => {
   if (server.url.includes("localhost")) {
     return {

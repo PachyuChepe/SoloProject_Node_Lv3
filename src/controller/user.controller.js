@@ -24,10 +24,10 @@ class UserController {
   // 사용자 로그인을 처리하고 토큰을 반환
   login = async (req, res, next) => {
     try {
-      const { accessToken, user } = await this.userService.login(req.body);
+      const { accessToken } = await this.userService.login(req.body);
       res.cookie("Authorization", `Bearer ${accessToken}`);
 
-      res.status(200).json({ success: true, message: "로그인 성공", accessToken, user: { id: user.id, email: user.email, name: user.name } });
+      res.status(200).json({ success: true, message: "로그인 성공", accessToken });
     } catch (error) {
       next(error);
     }
@@ -37,9 +37,13 @@ class UserController {
   getUser = async (req, res, next) => {
     try {
       const user = await this.userService.getUser(res.locals.user.id);
-      const { password, ...data } = user;
+      // const { password, ...data } = user;
+      const userData = {
+        email: user.email,
+        name: user.name,
+      };
 
-      res.status(200).json({ success: true, data });
+      res.status(200).json({ success: true, data: userData });
     } catch (error) {
       next(error);
     }

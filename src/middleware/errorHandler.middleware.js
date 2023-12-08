@@ -34,7 +34,7 @@ const errorHandler = (err, req, res, next) => {
   logger.error(logMessage);
 
   // 서버 오류 응답 반환
-  res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+  res.status(500).json({ success: false, message: "서버 처리 중 오류가 발생했습니다. 문제가 지속되면 지원팀에 문의해주세요." });
 };
 
 module.exports = errorHandler;
