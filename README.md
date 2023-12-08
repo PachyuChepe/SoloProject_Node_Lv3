@@ -1,7 +1,24 @@
-# SoloProject_Node_Lv3
-노드 심화 개인과제<br><br><br>
+# 배포 사이트
+
+[HTTPS 배포] https://www.vitahub.xyz <br>
+[Swagger API] https://www.vitahub.xyz/api-docs/
+
+<br><br><br>
+
+### 로컬 환경 HTTPS 세팅
+
+- 운영체제: Windows 10
+- 필수 설치: chocolatey & mkcert
+
+```
+# 프로젝트 루트 디렉토리
+mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
+```
+
+<br><br><br>
 
 ### Git 명령어 정리
+
 ```
 // 브랜치 생성 및 파일 이동
 git switch -c <브랜치명>
@@ -29,3 +46,5 @@ git clone <옮겨 담을 레포지토리 URL>
 // 병합할 레포지토리
 git subtree add --prefix=하위디렉토리명 <병합할 레포지토리 URL> <브랜치명>
 ```
+
+<br><br><br>
