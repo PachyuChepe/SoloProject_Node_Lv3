@@ -28,7 +28,6 @@ async function dropDatabase() {
 }
 
 // Prisma를 사용하여 새 데이터베이스를 생성하는 함수
-
 async function setPrismaDB() {
   await dropDatabase();
 

@@ -21,6 +21,7 @@ async function checkDatabaseConnection() {
     if (Number(productTable[0].count) === 0) {
       throw new Error("Product 테이블이 존재하지 않습니다.");
     }
+
     // 연결 및 테이블 존재 확인 완료 메시지
     console.log("Prisma 데이터베이스 및 테이블 연결 성공");
   } catch (error) {

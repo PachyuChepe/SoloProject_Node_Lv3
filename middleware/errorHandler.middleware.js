@@ -10,7 +10,6 @@ const logger = require("../config/winston.config.js");
  * @param {object} res - HTTP 응답 객체
  * @param {function} next - 다음 미들웨어 함수
  */
-
 const errorHandler = (err, req, res, next) => {
   // ApiError 인스턴스인 경우 사용자 정의 응답 반환
   if (err instanceof ApiError) {
