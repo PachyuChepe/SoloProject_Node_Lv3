@@ -36,7 +36,7 @@ app.use(
 // 라우터 설정
 const userRouter = require("./routes/user.router.js");
 const itemRouter = require("./routes/products.router.js");
-const errorHandler = require("./middleware/errorHandler.middleware");
+const errorHandler = require("./middleware/errorHandler.middleware.js");
 app.use("/api", [userRouter, itemRouter]);
 app.use(errorHandler);
 

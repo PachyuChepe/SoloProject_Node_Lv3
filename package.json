@@ -4,9 +4,9 @@
   "description": "노드 숙련 개인과제",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "resetdb": "node config/drop.db.config.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "resetdb": "node src/config/drop.db.config.js",
     "test": "cross-env NODE_ENV=test mocha"
   },
   "keywords": [],

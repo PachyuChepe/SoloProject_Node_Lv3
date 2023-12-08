@@ -15,11 +15,11 @@ exports.isLoggedIn = async (req, res, next) => {
 
   // 토큰 유효성 검증
   if (!authToken || authType !== "Bearer") {
-    throw ApiError.Unauthorized("재로그인이 필요합니다.");
-    // return res.status(401).send({
-    //   success: false,
-    //   message: "로그인이 필요합니다.",
-    // });
+    // throw ApiError.Unauthorized("재로그인이 필요합니다.");
+    return res.status(401).send({
+      success: false,
+      message: "로그인이 필요합니다.",
+    });
   }
 
   try {
@@ -38,14 +38,14 @@ exports.isLoggedIn = async (req, res, next) => {
 
       const refreshToken = await redisClient.get(userId.toString());
       if (!refreshToken) {
-        throw ApiError.Unauthorized("재로그인이 필요합니다.");
-        // return res.status(401).send({ success: false, message: "재로그인이 필요합니다." });
+        // throw ApiError.Unauthorized("재로그인이 필요합니다.");
+        return res.status(401).send({ success: false, message: "재로그인이 필요합니다." });
       }
 
       try {
         jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
 
-        const newAccessToken = jwt.sign({ userId: userId }, env.JWT_SECRET, { expiresIn: "12h" });
+        const newAccessToken = jwt.sign({ userId: userId }, env.JWT_SECRET, { expiresIn: "15m" });
         res.cookie("Authorization", `Bearer ${newAccessToken}`);
         const user = await prisma.user.findUnique({ where: { id: userId } });
         res.locals.user = user;
@@ -53,18 +53,18 @@ exports.isLoggedIn = async (req, res, next) => {
       } catch (refreshTokenError) {
         await redisClient.del(userId.toString());
         res.clearCookie("Authorization");
-        throw ApiError.Unauthorized("재로그인이 필요합니다.");
-        // return res.status(401).send({
-        //   success: false,
-        //   message: "재로그인이 필요합니다.",
-        // });
+        // throw ApiError.Unauthorized("재로그인이 필요합니다.");
+        return res.status(401).send({
+          success: false,
+          message: "재로그인이 필요합니다.",
+        });
       }
     } else {
-      throw ApiError.InternalError("서버 오류가 발생했습니다.");
-      // res.status(500).send({
-      //   success: false,
-      //   message: "서버 오류가 발생했습니다.",
-      // });
+      // throw ApiError.InternalError("서버 오류가 발생했습니다.");
+      res.status(500).send({
+        success: false,
+        message: "서버 오류가 발생했습니다.",
+      });
     }
   }
 };
@@ -81,11 +81,11 @@ exports.isNotLoggedIn = async (req, res, next) => {
   }
   try {
     jwt.verify(authToken, env.JWT_SECRET);
-    throw ApiError.Unauthorized("이미 로그인된 상태입니다.");
-    // res.status(401).send({
-    //   success: false,
-    //   message: "이미 로그인된 상태입니다",
-    // });
+    // throw ApiError.Unauthorized("이미 로그인된 상태입니다.");
+    res.status(401).send({
+      success: false,
+      message: "이미 로그인된 상태입니다",
+    });
   } catch (error) {
     next();
   }

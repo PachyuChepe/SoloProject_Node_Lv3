@@ -1,6 +1,6 @@
 const { spawn } = require("child_process");
 const mysql = require("mysql2/promise");
-const env = require("../config/env.config.js");
+const env = require("./env.config.js");
 
 // 기존 MySQL 데이터베이스를 삭제하는 함수
 async function dropDatabase() {
