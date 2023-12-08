@@ -47,7 +47,7 @@ class UserService {
       throw ApiError.Unauthorized("패스워드가 일치하지 않습니다.");
     }
 
-    const accessToken = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "10s" });
+    const accessToken = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "15m" });
     const refreshToken = jwt.sign({ userId: user.id }, env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
     await redisClient.set(user.id.toString(), refreshToken, "EX", 60 * 60 * 24 * 7);
 

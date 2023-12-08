@@ -22,7 +22,7 @@ morganConfig(app);
 // CORS 설정
 app.use(
   cors({
-    origin: [`http://localhost:${env.SERVER_PORT}`, `https://localhost:${env.SERVER_PORT}`, "http://www.vitahub.xyz", "https://www.vitahub.xyz"],
+    origin: [`https://localhost:${env.SERVER_PORT}`, "https://www.vitahub.xyz"],
     credentials: true,
   }),
 );
@@ -40,7 +40,7 @@ apiSpec.servers = apiSpec.servers.map((server) => {
   if (server.url.includes("localhost")) {
     return {
       ...server,
-      url: `http://localhost:${env.SERVER_PORT}`,
+      url: `https://localhost:${env.SERVER_PORT}`,
     };
   }
   return server;
@@ -58,8 +58,8 @@ checkDatabaseConnection()
     let server;
     // HTTPS 서버 설정 및 시작 (키 파일이 존재하는 경우)
     if (fs.existsSync("./key.pem") && fs.existsSync("./cert.pem")) {
-      const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
-      const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
+      const privateKey = fs.readFileSync(__dirname + "/../key.pem", "utf8");
+      const certificate = fs.readFileSync(__dirname + "/../cert.pem", "utf8");
       const credentials = { key: privateKey, cert: certificate };
       server = https.createServer(credentials, app);
       server.listen(env.SERVER_PORT, () => {

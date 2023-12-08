@@ -25,7 +25,11 @@ class UserController {
   login = async (req, res, next) => {
     try {
       const { accessToken } = await this.userService.login(req.body);
-      res.cookie("Authorization", `Bearer ${accessToken}`);
+      res.cookie("Authorization", `Bearer ${accessToken}`, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      });
 
       res.status(200).json({ success: true, message: "로그인 성공", accessToken });
     } catch (error) {
