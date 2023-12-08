@@ -4,7 +4,7 @@
   "description": "노드 숙련 개인과제",
   "main": "app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "npx prisma generate && node src/app.js",
     "dev": "nodemon src/app.js",
     "resetdb": "node src/config/drop.db.config.js",
     "test": "cross-env NODE_ENV=test mocha"
